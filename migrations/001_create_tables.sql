@@ -1,0 +1,19 @@
+-- Create users table
+CREATE TABLE IF NOT EXISTS users (
+  id UUID PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(150) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  role VARCHAR(20) DEFAULT 'student',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create exam_results table
+CREATE TABLE IF NOT EXISTS exam_results (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  score INTEGER NOT NULL,
+  risk VARCHAR(20) NOT NULL,
+  skills JSONB,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
