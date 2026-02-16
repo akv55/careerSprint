@@ -51,7 +51,12 @@ export default function ProctoringPage() {
 
 /* ---------- COMPONENTS ---------- */
 
-function StatCard({ title, value }) {
+type StatCardProps = {
+  title: string;
+  value: string | number;
+};
+
+function StatCard({ title, value }: StatCardProps) {
   return (
     <div className="bg-white p-6 rounded-2xl shadow">
       <p className="text-gray-500 text-sm">{title}</p>
@@ -62,7 +67,13 @@ function StatCard({ title, value }) {
   );
 }
 
-function ProctorCard({ name, exam, risk }) {
+type ProctorCardProps = {
+  name: string;
+  exam: string;
+  risk: "High" | "Medium" | "Low";
+};
+
+function ProctorCard({ name, exam, risk }: ProctorCardProps) {
   const riskColor =
     risk === "High"
       ? "bg-red-100 text-red-600"

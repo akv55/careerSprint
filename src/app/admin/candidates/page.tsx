@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Eye, BarChart2, Pencil, Plus, UserCheck, Users,Download,Upload, TrendingUp, Filter, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
+import { Search, Eye, BarChart2, Pencil, Plus, UserCheck, Users, Download, Upload, TrendingUp, Filter, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 // --- Mock Data ---
 const candidates = [

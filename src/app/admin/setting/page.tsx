@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction, type ReactNode } from "react";
 
 export default function AdminSettingsPage() {
   const [mfa, setMfa] = useState(true);
@@ -52,7 +52,12 @@ export default function AdminSettingsPage() {
 
 /* ---------- COMPONENTS ---------- */
 
-function Section({ title, children }) {
+type SectionProps = {
+  title: string;
+  children: ReactNode;
+};
+
+function Section({ title, children }: SectionProps) {
   return (
     <div className="bg-white p-6 rounded-2xl shadow space-y-4">
       <h2 className="text-lg font-semibold text-[#1F6FEB]">{title}</h2>
@@ -61,7 +66,12 @@ function Section({ title, children }) {
   );
 }
 
-function Input({ label, defaultValue }) {
+type InputProps = {
+  label: string;
+  defaultValue?: string;
+};
+
+function Input({ label, defaultValue }: InputProps) {
   return (
     <div>
       <label className="block text-sm text-gray-500 mb-1">{label}</label>
@@ -74,12 +84,18 @@ function Input({ label, defaultValue }) {
   );
 }
 
-function Toggle({ label, state = false, setState = () => {} }) {
+type ToggleProps = {
+  label: string;
+  state?: boolean;
+  setState?: Dispatch<SetStateAction<boolean>>;
+};
+
+function Toggle({ label, state = false, setState }: ToggleProps) {
   return (
     <div className="flex items-center justify-between">
       <span className="text-sm text-gray-600">{label}</span>
       <button
-        onClick={() => setState(!state)}
+        onClick={() => setState?.(!state)}
         className={`w-12 h-6 flex items-center rounded-full p-1 transition ${
           state ? "bg-[#1F6FEB]" : "bg-gray-300"
         }`}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction, type ReactNode } from "react";
 import {
   Bell,
   Moon,
@@ -110,7 +110,12 @@ export default function SettingsPage() {
 
 /* ---------- REUSABLE COMPONENTS ---------- */
 
-function Section({ title, children }) {
+type SectionProps = {
+  title: string;
+  children: ReactNode;
+};
+
+function Section({ title, children }: SectionProps) {
   return (
     <div className="bg-white p-8 rounded-3xl shadow-md">
       <h2 className="text-xl font-semibold mb-6">{title}</h2>
@@ -119,7 +124,12 @@ function Section({ title, children }) {
   );
 }
 
-function Input({ label, defaultValue }) {
+type InputProps = {
+  label: string;
+  defaultValue?: string;
+};
+
+function Input({ label, defaultValue }: InputProps) {
   return (
     <div>
       <label className="block text-sm text-gray-500 mb-2">
@@ -134,7 +144,14 @@ function Input({ label, defaultValue }) {
   );
 }
 
-function Toggle({ icon, label, state, setState }) {
+type ToggleProps = {
+  icon: ReactNode;
+  label: string;
+  state: boolean;
+  setState: Dispatch<SetStateAction<boolean>>;
+};
+
+function Toggle({ icon, label, state, setState }: ToggleProps) {
   return (
     <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl">
       <div className="flex items-center gap-3">

@@ -204,7 +204,7 @@ export default function AdminDashboardPage() {
                                     ))}
                                 </Pie>
                                 <Tooltip
-                                    formatter={(value: number) => `${value}%`}
+									formatter={(value) => `${value}%`}
                                     contentStyle={{
                                         background: 'var(--base-100)',
                                         border: '1px solid var(--base-200)',
