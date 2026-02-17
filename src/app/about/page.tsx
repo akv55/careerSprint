@@ -20,14 +20,14 @@ export default function About() {
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div>
             <p className="text-xs font-semibold tracking-[0.3em] uppercase text-[#8aa4ff] mb-3">
-              About ExamDeck AI
+              About CareerSprint
             </p>
             <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
               Turning ambition into
               <span className="text-[#0F6FFF]"> interview-ready impact</span>
             </h1>
             <p className="text-lg text-gray-600 mb-4">
-              ExamDeck AI is an advanced interview preparation platform designed to help candidates move from potential to performance with confidence.
+              CareerSprint is an advanced interview preparation platform designed to help candidates move from potential to performance with confidence.
             </p>
             <p className="text-lg text-gray-600 mb-6">
               Using modern AI, we read between the lines of your CV, uncover strengths and blind spots, and translate that into tailored exams and training plans so every practice session brings you closer to the offer.
@@ -59,7 +59,7 @@ export default function About() {
               <div className="h-full rounded-2xl bg-white/95 p-6">
                 <h3 className="text-base font-semibold text-gray-900 mb-2">AI that explains</h3>
                 <p className="text-sm text-gray-600">
-                  Not just scores—ExamDeck AI gives you context, reasoning, and next best steps.
+                  Not just scores—CareerSprint gives you context, reasoning, and next best steps.
                 </p>
               </div>
             </div>

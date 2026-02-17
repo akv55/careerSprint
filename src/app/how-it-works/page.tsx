@@ -26,7 +26,7 @@ export default function HowItWorks() {
             <span className="text-[#0F6FFF]"> interview-ready</span>
           </h1>
           <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
-            ExamDeck AI guides you through a clear, repeatable loop so every session improves both your CV and your interview performance.
+            CareerSprint guides you through a clear, repeatable loop so every session improves both your CV and your interview performance.
           </p>
         </div>
 

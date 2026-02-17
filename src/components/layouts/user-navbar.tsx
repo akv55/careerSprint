@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Search, Bell, UserCircle2, User, KeyRound, LogOut, ChevronDown } from "lucide-react";
 
 export default function UserNavbar() {
@@ -29,20 +30,16 @@ export default function UserNavbar() {
     return (
         <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 sm:px-6 lg:px-8">
             {/* Left: Logo / brand */}
-            <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#0F6FFF] to-[#FF8A21] text-white text-sm font-bold">
-                    I2I
-                </div>
-                <div className="hidden sm:block">
-                    <p className="text-sm font-semibold text-gray-900">
-                        <span className="text-[#0F6FFF]">Exam</span>
-                        <span className="text-[#FF8A21]">Deck</span>
-                    </p>
-                    <p className="text-[10px] tracking-[0.3em] uppercase text-[#8aa4ff]">
-                        Invest to <span className="text-[#FF8A21]">Impact</span>
-                    </p>
-                </div>
-            </div>
+            <Link href="/dashboard" className="flex items-center gap-2">
+                <Image
+                    src="/logo.png"
+                    alt="CareerSprint Admin"
+                    width={140}
+                    height={40}
+                    className="h-36 w-auto object-contain"
+                    priority
+                />
+            </Link>
 
             {/* Middle: Search */}
             <div className="flex-1 max-w-md mx-4 hidden md:flex">
@@ -74,11 +71,10 @@ export default function UserNavbar() {
                     <button
                         type="button"
                         onClick={() => setOpen((prev) => !prev)}
-                        className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition-colors border border-orange-300 ${
-                            open
+                        className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition-colors border border-orange-300 ${open
                                 ? "bg-gradient-to-r from-[#0F6FFF] to-[#FF8A21] text-white border-transparent"
                                 : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
-                        }`}
+                            }`}
                     >
                         <UserCircle2 className={`h-5 w-5 ${open ? "text-white" : "text-orange-300"}`} />
                         {/* <span className="hidden sm:inline">You</span> */}

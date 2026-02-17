@@ -26,7 +26,7 @@ export default function Features() {
             <span className="text-[#0F6FFF]"> impress interviewers</span>
           </h1>
           <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
-            ExamDeck AI connects CV analysis, realistic exams, and guided training into one smooth preparation journey.
+            CareerSprint connects CV analysis, realistic exams, and guided training into one smooth preparation journey.
           </p>
         </div>
 

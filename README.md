@@ -1,4 +1,4 @@
-# Interview Preparation Platform - ExamDeck AI
+# Interview Preparation Platform - CareerSprint
 
 A full-stack interview preparation application built with Next.js, Node.js, and MongoDB.
 

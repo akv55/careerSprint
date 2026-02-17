@@ -2,88 +2,16 @@
 
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
 import { Brain, FileText, TrendingUp, ChevronDown } from "lucide-react";
+import LandingNavbar from '@/components/layouts/navbar';
+import LandingFooter from '@/components/layouts/footer';
 
 export default function Home() {
-
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-  const navItems = ['About', 'Features', 'How it Works'];
-
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#f5f8ff] via-white to-[#fff5ec] overflow-hidden">
 
       {/* Navigation */}
-      <nav
-        className={`fixed w-full z-50 transition-all duration-300 ${scrolled
-            ? 'bg-white/70 backdrop-blur-xl shadow-md py-3'
-            : 'bg-white/90 backdrop-blur border-b border-[#e4ecff] py-5'
-          }`}
-      >
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-
-          {/* Logo */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-3"
-          >
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#0F6FFF] to-[#FF8A21] flex items-center justify-center text-white font-bold shadow-md">
-              I2I
-            </div>
-
-            <div>
-              <p className="text-xl font-extrabold tracking-tight">
-                <span className="text-[#0F6FFF]">Exam</span>
-                <span className="text-[#FF8A21]">Deck</span>
-                <span className="text-[#0F6FFF]"> AI</span>
-              </p>
-              <p className="text-[10px] tracking-[0.3em] uppercase text-[#8aa4ff]">
-                Invest to <span className="text-[#FF8A21]">Impact</span>
-              </p>
-            </div>
-          </motion.div>
-
-          <div className="flex items-center gap-10">
-            {navItems.map((item) => {
-              const sectionId = item.toLowerCase().replace(/ /g, '-');
-              return (
-                <Link
-                  key={item}
-                  href={`/#${sectionId}`}
-                  className="relative text-sm font-medium text-gray-600 hover:text-[#0F6FFF] transition-colors group"
-                >
-                  {item}
-                  <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-gradient-to-r from-[#0F6FFF] to-[#FF8A21] transition-all duration-300 group-hover:w-full"></span>
-                </Link>
-              );
-            })}
-
-            <Link
-              href="/auth/login"
-              className="text-sm font-semibold text-[#0F6FFF] hover:text-[#0057d3] transition"
-            >
-              Login
-            </Link>
-
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-              <Link
-                href="/auth/register"
-                className="bg-gradient-to-r from-[#FF8A21] to-[#ff7a00] px-6 py-2.5 rounded-full text-white font-semibold shadow-lg hover:shadow-xl transition"
-              >
-                Sign Up
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-      </nav>
+      <LandingNavbar />
 
       {/* Hero Section */}
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28 text-center h-screen justify-center items-center flex flex-col">
@@ -161,14 +89,14 @@ export default function Home() {
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div>
             <p className="text-xs font-semibold tracking-[0.3em] uppercase text-[#8aa4ff] mb-3">
-              About ExamDeck AI
+              About CareerSprint
             </p>
             <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
               Turning ambition into
               <span className="text-[#0F6FFF]"> interview-ready impact</span>
             </h1>
             <p className="text-lg text-gray-600 mb-4">
-              ExamDeck AI is an advanced interview preparation platform designed to help candidates move from potential to performance with confidence.
+              CareerSprint is an advanced interview preparation platform designed to help candidates move from potential to performance with confidence.
             </p>
             <p className="text-lg text-gray-600 mb-6">
               Using modern AI, we read between the lines of your CV, uncover strengths and blind spots, and translate that into tailored exams and training plans so every practice session brings you closer to the offer.
@@ -200,7 +128,7 @@ export default function Home() {
               <div className="h-full rounded-2xl bg-white/95 p-6">
                 <h3 className="text-base font-semibold text-gray-900 mb-2">AI that explains</h3>
                 <p className="text-sm text-gray-600">
-                  Not just scores—ExamDeck AI gives you context, reasoning, and next best steps.
+                  Not just scores—CareerSprint gives you context, reasoning, and next best steps.
                 </p>
               </div>
             </div>
@@ -231,7 +159,7 @@ export default function Home() {
 
           <div className="text-center mb-16">
             <h3 className="text-4xl sm:text-5xl font-bold text-gray-900">
-              Why Choose  <span className="bg-gradient-to-r from-[#0F6FFF] to-[#FF8A21] bg-clip-text text-transparent">ExamDeck AI?</span>
+              Why Choose  <span className="bg-gradient-to-r from-[#0F6FFF] to-[#FF8A21] bg-clip-text text-transparent">CareerSprint?</span>
             </h3>
             <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
               AI-driven tools crafted to turn your CV into measurable career growth.
@@ -283,7 +211,7 @@ export default function Home() {
             <span className="text-[#0F6FFF]"> interview-ready</span>
           </h2>
           <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
-            ExamDeck AI guides you through a clear, repeatable loop so every session improves both your CV and your interview performance.
+            CareerSprint guides you through a clear, repeatable loop so every session improves both your CV and your interview performance.
           </p>
         </div>
 
@@ -293,7 +221,7 @@ export default function Home() {
           </div>
 
           <div className="space-y-8 sm:space-y-10">
-            {[ 
+            {[
               { step: 1, title: 'Register', desc: 'Create your account with email and password' },
               { step: 2, title: 'Upload CV', desc: 'Upload your resume for AI analysis' },
               { step: 3, title: 'Get Insights', desc: 'Receive detailed CV analysis and recommendations' },
@@ -323,6 +251,7 @@ export default function Home() {
         </div>
       </section>
 
+      <LandingFooter />
     </main>
   );
 }

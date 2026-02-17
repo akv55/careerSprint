@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Search, Bell, UserCircle2, User, KeyRound, LogOut, ChevronDown } from "lucide-react";
-
+import Image from "next/image";
 export default function AdminNavbar() {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -29,17 +29,16 @@ export default function AdminNavbar() {
   return (
     <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 sm:px-6 lg:px-8">
       {/* Left: Logo / brand */}
-      <div className="flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#0F6FFF] to-[#FF8A21] text-white text-sm font-bold">
-          AD
-        </div>
-        <div className="hidden sm:block">
-          <p className="text-sm font-semibold text-gray-900"><span className="text-[#0F6FFF]">Exam</span><span className="text-[#FF8A21]">Deck</span> Admin</p>
-          <p className="text-[10px] tracking-[0.3em] uppercase text-[#8aa4ff]">
-            Invest to <span className="text-[#FF8A21]">Impact</span>
-          </p>
-        </div>
-      </div>
+      <Link href="/admin/adminDashboard" className="flex items-center gap-2">
+        <Image
+          src="/logo.png"
+          alt="CareerSprint Admin"
+          width={140}
+          height={40}
+          className="h-36 w-auto object-contain"
+          priority
+        />
+      </Link>
 
       {/* Middle: Search */}
       <div className="flex-1 max-w-md mx-4 hidden md:flex">
