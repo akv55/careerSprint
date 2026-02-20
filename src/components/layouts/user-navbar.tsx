@@ -34,9 +34,8 @@ export default function UserNavbar() {
                 <Image
                     src="/logo.png"
                     alt="CareerSprint Admin"
-                    width={140}
+                    width={200}
                     height={40}
-                    className="h-36 w-auto object-contain"
                     priority
                 />
             </Link>
