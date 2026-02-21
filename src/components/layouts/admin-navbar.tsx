@@ -30,12 +30,11 @@ export default function AdminNavbar() {
     <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 sm:px-6 lg:px-8">
       {/* Left: Logo / brand */}
       <Link href="/admin/adminDashboard" className="flex items-center gap-2">
-       <Image
+        <Image
           src="/logo.png"
           alt="CareerSprint Admin"
           width={200}
           height={40}
-
           priority
         />
       </Link>
