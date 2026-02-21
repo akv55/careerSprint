@@ -31,12 +31,12 @@ export default function UserNavbar() {
         <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 sm:px-6 lg:px-8">
             {/* Left: Logo / brand */}
             <Link href="/dashboard" className="flex items-center gap-2">
-                <Image
+                 <Image
                     src="/logo.png"
                     alt="CareerSprint Admin"
-                    width={140}
+                    width={200}
                     height={40}
-                    className="h-36 w-auto object-contain"
+
                     priority
                 />
             </Link>
@@ -72,8 +72,8 @@ export default function UserNavbar() {
                         type="button"
                         onClick={() => setOpen((prev) => !prev)}
                         className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition-colors border border-orange-300 ${open
-                                ? "bg-gradient-to-r from-[#0F6FFF] to-[#FF8A21] text-white border-transparent"
-                                : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                            ? "bg-gradient-to-r from-[#0F6FFF] to-[#FF8A21] text-white border-transparent"
+                            : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
                             }`}
                     >
                         <UserCircle2 className={`h-5 w-5 ${open ? "text-white" : "text-orange-300"}`} />

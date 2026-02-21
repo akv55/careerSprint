@@ -30,12 +30,12 @@ export default function AdminNavbar() {
     <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 sm:px-6 lg:px-8">
       {/* Left: Logo / brand */}
       <Link href="/admin/adminDashboard" className="flex items-center gap-2">
-        <Image
+       <Image
           src="/logo.png"
           alt="CareerSprint Admin"
-          width={140}
+          width={200}
           height={40}
-          className="h-36 w-auto object-contain"
+
           priority
         />
       </Link>
@@ -54,8 +54,8 @@ export default function AdminNavbar() {
 
       {/* Right: Actions */}
       <div className="flex items-center gap-3">
-        <button
-          type="button"
+        <Link
+          href="/admin/notifications"
           className="relative flex h-9 w-9 items-center justify-center rounded-full border border-blue-300 bg-blue-50 text-gray-500 hover:bg-gray-50"
           aria-label="Notifications"
         >
@@ -63,17 +63,16 @@ export default function AdminNavbar() {
           <span className="absolute -top-0.5 -right-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-semibold text-white">
             3
           </span>
-        </button>
+        </Link>
 
         <div className="relative" ref={menuRef}>
           <button
             type="button"
             onClick={() => setOpen((prev) => !prev)}
-            className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition-colors border border-orange-300 ${
-              open
-                ? "bg-gradient-to-r from-[#0F6FFF] to-[#FF8A21] text-white border-transparent"
-                : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
-            }`}
+            className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition-colors border border-orange-300 ${open
+              ? "bg-gradient-to-r from-[#0F6FFF] to-[#FF8A21] text-white border-transparent"
+              : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+              }`}
           >
             <UserCircle2 className={`h-5 w-5 ${open ? "text-white" : "text-orange-300"}`} />
             {/* <span className="hidden sm:inline">Admin</span> */}

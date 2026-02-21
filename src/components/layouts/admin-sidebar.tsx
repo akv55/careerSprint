@@ -14,6 +14,7 @@ import {
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
+  Bell,
 } from "lucide-react";
 
 const items = [
@@ -21,6 +22,7 @@ const items = [
   { label: "Access Management", href: "/admin/accessManagement", icon: ShieldCheck },
   { label: "Billing", href: "/admin/billing", icon: CreditCard },
   { label: "Candidates", href: "/admin/candidates", icon: Users },
+   { label: "Notifications", href: "/admin/notifications", icon: Bell },
   { label: "Exams", href: "/admin/exams", icon: FileText },
   { label: "Proctoring", href: "/admin/proctoring", icon: MonitorPlay },
   { label: "Settings", href: "/admin/setting", icon: Settings },

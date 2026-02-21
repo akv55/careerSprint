@@ -11,7 +11,7 @@ export default function LandingFooter() {
 							<Image
 								src="/logo.png"
 								alt="CareerSprint by i2i industry"
-								width={180}
+								width={200}
 								height={56}
 								className="h-12 w-auto object-contain"
 								priority

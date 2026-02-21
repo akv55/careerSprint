@@ -5,6 +5,14 @@ import { useState, type Dispatch, type SetStateAction, type ReactNode } from "re
 export default function AdminSettingsPage() {
   const [mfa, setMfa] = useState(true);
   const [maintenance, setMaintenance] = useState(false);
+  const [allowRegistrations, setAllowRegistrations] = useState(true);
+  const [enforcePasswordPolicy, setEnforcePasswordPolicy] = useState(true);
+  const [randomizeQuestions, setRandomizeQuestions] = useState(true);
+  const [negativeMarking, setNegativeMarking] = useState(false);
+  const [examReminderEmails, setExamReminderEmails] = useState(true);
+  const [resultSummaryEmails, setResultSummaryEmails] = useState(true);
+  const [aiProctoring, setAiProctoring] = useState(false);
+  const [recordWebcam, setRecordWebcam] = useState(false);
 
   return (
     <div className="p-8 bg-[#F8FAFC] min-h-screen space-y-8">
@@ -23,21 +31,69 @@ export default function AdminSettingsPage() {
       <Section title="General Settings">
         <Input label="Platform Name" defaultValue="Industry Exam Portal" />
         <Input label="Support Email" defaultValue="support@industry.com" />
+        <Toggle
+          label="Allow new user registrations"
+          state={allowRegistrations}
+          setState={setAllowRegistrations}
+        />
         <Toggle label="Maintenance Mode" state={maintenance} setState={setMaintenance} />
       </Section>
 
       {/* SECURITY SETTINGS */}
       <Section title="Security Settings">
         <Toggle label="Require MFA for Admins" state={mfa} setState={setMfa} />
+        <Toggle
+          label="Enforce strong password policy"
+          state={enforcePasswordPolicy}
+          setState={setEnforcePasswordPolicy}
+        />
         <Input label="Session Timeout (minutes)" defaultValue="30" />
         <Input label="Max Login Attempts" defaultValue="5" />
+        <Input label="Password expiry (days)" defaultValue="90" />
       </Section>
 
       {/* EXAM SETTINGS */}
       <Section title="Exam Configuration">
         <Input label="Default Exam Duration (mins)" defaultValue="60" />
-        <Toggle label="Randomize Questions" state={true} />
-        <Toggle label="Enable Negative Marking" state={false} />
+        <Toggle
+          label="Randomize Questions"
+          state={randomizeQuestions}
+          setState={setRandomizeQuestions}
+        />
+        <Toggle
+          label="Enable Negative Marking"
+          state={negativeMarking}
+          setState={setNegativeMarking}
+        />
+      </Section>
+
+      {/* NOTIFICATIONS & COMMUNICATION */}
+      <Section title="Notifications & Communication">
+        <Toggle
+          label="Send exam reminder emails to candidates"
+          state={examReminderEmails}
+          setState={setExamReminderEmails}
+        />
+        <Toggle
+          label="Send result summary emails after exam completion"
+          state={resultSummaryEmails}
+          setState={setResultSummaryEmails}
+        />
+      </Section>
+
+      {/* PROCTORING & COMPLIANCE */}
+      <Section title="Proctoring & Compliance">
+        <Toggle
+          label="Enable AI proctoring for online exams"
+          state={aiProctoring}
+          setState={setAiProctoring}
+        />
+        <Toggle
+          label="Record webcam during proctored sessions"
+          state={recordWebcam}
+          setState={setRecordWebcam}
+        />
+        <Input label="Proctoring data retention (days)" defaultValue="30" />
       </Section>
 
       {/* SAVE BUTTON */}

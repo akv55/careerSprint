@@ -52,6 +52,8 @@ export default function NotificationsPage() {
   const [notifications, setNotifications] = useState(initialNotifications)
   const [filter, setFilter] = useState<'all' | 'unread'>('all')
 
+  const unreadCount = notifications.filter((n) => !n.read).length
+
   const markAllAsRead = () => {
     setNotifications((prev) =>
       prev.map((n) => ({ ...n, read: true }))
@@ -62,6 +64,10 @@ export default function NotificationsPage() {
     filter === 'unread'
       ? notifications.filter((n) => !n.read)
       : notifications
+
+  const markOneAsRead = (id: number) => {
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)))
+  }
 
   const getIcon = (type: Notification['type']) => {
     switch (type) {
@@ -80,11 +86,17 @@ export default function NotificationsPage() {
     <div className="max-w-4xl mx-auto space-y-6">
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Notifications</h1>
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Notifications</h1>
+          <p className="mt-1 text-xs text-base-content/60">
+            {unreadCount === 0 ? 'You have no unread notifications.' : `${unreadCount} unread notification${unreadCount > 1 ? 's' : ''}.`}
+          </p>
+        </div>
         <button
           onClick={markAllAsRead}
-          className="text-sm font-semibold text-blue-600 hover:text-orange-500 transition"
+          className="text-sm font-semibold text-blue-600 hover:text-orange-500 transition disabled:opacity-40 disabled:cursor-not-allowed"
+          disabled={unreadCount === 0}
         >
           Mark all as read
         </button>
@@ -129,15 +141,28 @@ export default function NotificationsPage() {
             <div className="mt-1">{getIcon(n.type)}</div>
 
             <div className="flex-1">
-              <div className="flex justify-between">
-                <h3 className="font-semibold">{n.title}</h3>
-                {!n.read && (
-                  <span className="w-2 h-2 bg-blue-600 rounded-full mt-2"></span>
-                )}
+              <div className="flex justify-between items-start gap-3">
+                <div>
+                  <h3 className="font-semibold">{n.title}</h3>
+                  <p className="text-sm text-base-content/70 mt-1">
+                    {n.description}
+                  </p>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  {!n.read && (
+                    <span className="w-2 h-2 bg-blue-600 rounded-full" aria-hidden="true"></span>
+                  )}
+                  {!n.read && (
+                    <button
+                      type="button"
+                      onClick={() => markOneAsRead(n.id)}
+                      className="text-[11px] font-medium text-blue-600 hover:text-orange-500"
+                    >
+                      Mark as read
+                    </button>
+                  )}
+                </div>
               </div>
-              <p className="text-sm text-base-content/70 mt-1">
-                {n.description}
-              </p>
               <p className="text-xs text-base-content/50 mt-2">
                 {n.time}
               </p>

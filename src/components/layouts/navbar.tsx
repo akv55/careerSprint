@@ -28,11 +28,11 @@ export function LandingNavbar() {
                 <div className="flex items-center h-10">
                     <Link href="/" className="flex items-center">
                         <Image
-                            src="/logo.png"   // use SVG version
+                            src="/logo.png"
                             alt="CareerSprint by i2i industry"
-                            width={140}
-                            height={60}
-                            className=" w-auto object-contain"
+                            width={200}
+                            height={40}
+                            className=""
                             priority
                         />
                     </Link>
