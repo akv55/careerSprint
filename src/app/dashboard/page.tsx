@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
+import CvUploadForm from './cv-upload-form'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -61,7 +62,9 @@ export default async function DashboardPage() {
               We're glad to see you again. Your role is: <span className="font-semibold text-gray-700 capitalize">{profile?.role || 'Student'}</span>
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <CvUploadForm />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-xl p-6">
                  <h3 className="font-semibold text-blue-900 text-lg mb-2">Your Profile</h3>
                  <p className="text-blue-700 text-sm mb-4">Keep your information up to date to get the best recommendations.</p>
