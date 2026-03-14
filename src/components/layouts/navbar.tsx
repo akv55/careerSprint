@@ -17,9 +17,9 @@ export function LandingNavbar() {
 
     return (
         <nav
-            className={`fixed w-full z-50 transition-all duration-300 backdrop-blur-md border-b border-[#e4ecff] ${scrolled
-                ? "bg-white/95 shadow-md py-2"
-                : "bg-white/80 py-4"
+            className={`fixed w-full z-50 transition-all duration-300 backdrop-blur-md border-b-2 border-gray-900 ${scrolled
+                ? "bg-white/95 py-3"
+                : "bg-white py-4"
                 }`}
         >
             <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
@@ -46,10 +46,10 @@ export function LandingNavbar() {
                             <Link
                                 key={item}
                                 href={`/#${sectionId}`}
-                                className="relative text-sm font-medium text-gray-600 hover:text-[#0F6FFF] transition-colors group"
+                                className="relative text-sm font-bold text-gray-700 hover:text-gray-900 transition-colors group"
                             >
                                 {item}
-                                <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-gradient-to-r from-[#0F6FFF] to-[#FF8A21] transition-all duration-300 group-hover:w-full" />
+                                <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-gray-900 transition-all duration-300 group-hover:w-full" />
                             </Link>
                         );
                     })}
@@ -57,7 +57,7 @@ export function LandingNavbar() {
                     {/* Login */}
                     <Link
                         href="/auth/login"
-                        className="text-sm font-semibold text-[#0F6FFF] hover:text-[#0057d3] transition"
+                        className="text-sm font-bold text-gray-900 hover:text-[#0F6FFF] transition"
                     >
                         Login
                     </Link>
@@ -66,7 +66,7 @@ export function LandingNavbar() {
                     <div>
                         <Link
                             href="/auth/register"
-                            className="bg-gradient-to-r from-[#FF8A21] to-[#ff6a00] px-6 py-2.5 rounded-full text-white font-semibold shadow-md hover:shadow-lg transition"
+                            className="bg-gray-900 px-6 py-2.5 rounded-xl text-white font-bold border-2 border-gray-900 shadow-[4px_4px_0px_0px_rgba(17,24,39,1)] hover:shadow-[2px_2px_0px_0px_rgba(17,24,39,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
                         >
                             Sign Up
                         </Link>

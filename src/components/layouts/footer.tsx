@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function LandingFooter() {
 	return (
-		<footer className="border-t border-[#e4ecff] bg-white/90 backdrop-blur">
+		<footer className="relative z-10 border-t-2 border-gray-900 bg-white">
 			<div className="max-w-7xl mx-auto px-6 py-10 lg:py-12">
 				<div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
 					<div className="max-w-sm">
@@ -17,28 +17,28 @@ export default function LandingFooter() {
 								priority
 							/>
 						</div>
-						<p className="text-sm text-gray-600">
-							AI-powered exam and interview preparation to turn ambition into
-								<strong className="font-semibold text-[#0F6FFF]"> interview-ready impact</strong>.
+						<p className="text-sm text-gray-700 font-medium">
+							Targeted exam and interview preparation to turn ambition into 
+							<strong className="font-black text-[#0F6FFF]"> interview-ready impact</strong>.
 						</p>
 					</div>
 
 					<div className="grid grid-cols-2 gap-8 sm:grid-cols-3 text-sm">
 						<div>
-							<h3 className="mb-3 font-semibold text-gray-900">Product</h3>
-							<ul className="space-y-2 text-gray-600">
+							<h3 className="mb-3 font-black text-gray-900 uppercase tracking-widest text-xs">Product</h3>
+							<ul className="space-y-4 text-gray-600 font-bold">
 								<li>
-									<Link href="/#about" className="hover:text-[#0F6FFF] transition-colors">
+									<Link href="/#about" className="hover:text-gray-900 hover:underline decoration-2 underline-offset-4 transition-all">
 										About
 									</Link>
 								</li>
 								<li>
-									<Link href="/#features" className="hover:text-[#0F6FFF] transition-colors">
+									<Link href="/#features" className="hover:text-gray-900 hover:underline decoration-2 underline-offset-4 transition-all">
 										Features
 									</Link>
 								</li>
 								<li>
-									<Link href="/#how-it-works" className="hover:text-[#0F6FFF] transition-colors">
+									<Link href="/#how-it-works" className="hover:text-gray-900 hover:underline decoration-2 underline-offset-4 transition-all">
 										How it works
 									</Link>
 								</li>
@@ -46,20 +46,20 @@ export default function LandingFooter() {
 						</div>
 
 						<div>
-							<h3 className="mb-3 font-semibold text-gray-900">For candidates</h3>
-							<ul className="space-y-2 text-gray-600">
+							<h3 className="mb-3 font-black text-gray-900 uppercase tracking-widest text-xs">For candidates</h3>
+							<ul className="space-y-4 text-gray-600 font-bold">
 								<li>
-									<Link href="/auth/register" className="hover:text-[#0F6FFF] transition-colors">
+									<Link href="/auth/register" className="hover:text-gray-900 hover:underline decoration-2 underline-offset-4 transition-all">
 										Get started
 									</Link>
 								</li>
 								<li>
-									<Link href="/exam" className="hover:text-[#0F6FFF] transition-colors">
+									<Link href="/exam" className="hover:text-gray-900 hover:underline decoration-2 underline-offset-4 transition-all">
 										Practice exams
 									</Link>
 								</li>
 								<li>
-									<Link href="/dashboard" className="hover:text-[#0F6FFF] transition-colors">
+									<Link href="/dashboard" className="hover:text-gray-900 hover:underline decoration-2 underline-offset-4 transition-all">
 										Dashboard
 									</Link>
 								</li>
@@ -67,15 +67,15 @@ export default function LandingFooter() {
 						</div>
 
 						<div className="hidden sm:block">
-							<h3 className="mb-3 font-semibold text-gray-900">Company</h3>
-							<ul className="space-y-2 text-gray-600">
+							<h3 className="mb-3 font-black text-gray-900 uppercase tracking-widest text-xs">Company</h3>
+							<ul className="space-y-4 text-gray-600 font-bold">
 								<li>
-									<Link href="/about" className="hover:text-[#0F6FFF] transition-colors">
+									<Link href="/about" className="hover:text-gray-900 hover:underline decoration-2 underline-offset-4 transition-all">
 										About us
 									</Link>
 								</li>
 								<li>
-									<Link href="/features" className="hover:text-[#0F6FFF] transition-colors">
+									<Link href="/features" className="hover:text-gray-900 hover:underline decoration-2 underline-offset-4 transition-all">
 										Our features
 									</Link>
 								</li>
@@ -84,16 +84,16 @@ export default function LandingFooter() {
 					</div>
 				</div>
 
-				<div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-[#eef2ff] pt-6 text-xs text-gray-500 sm:flex-row">
+				<div className="mt-8 flex flex-col items-center justify-between gap-4 border-t-2 border-gray-900 pt-6 text-xs text-gray-800 font-bold sm:flex-row">
 					<p>
 						© {new Date().getFullYear()} CareerSprint by i2i industry. All rights reserved.
 					</p>
 					<div className="flex items-center gap-4">
-						<Link href="/terms" className="hover:text-[#0F6FFF] transition-colors">
+						<Link href="/terms" className="hover:text-gray-900 hover:underline decoration-2 underline-offset-4 transition-all">
 							Terms
 						</Link>
-						<span className="h-1 w-1 rounded-full bg-gray-300" />
-						<Link href="/privacy" className="hover:text-[#0F6FFF] transition-colors">
+						<span className="h-2 w-2 bg-gray-900" />
+						<Link href="/privacy" className="hover:text-gray-900 hover:underline decoration-2 underline-offset-4 transition-all">
 							Privacy
 						</Link>
 					</div>
