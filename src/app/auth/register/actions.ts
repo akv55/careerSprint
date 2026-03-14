@@ -9,9 +9,8 @@ export async function register(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const fullName = formData.get('fullName') as string
-  const role = formData.get('role') as string
 
-  if (!email || !password || !fullName || !role) {
+  if (!email || !password || !fullName) {
     return { error: 'Please fill in all fields' }
   }
 
@@ -36,8 +35,7 @@ export async function register(formData: FormData) {
     const { error: profileError } = await supabase.from('profiles').upsert({
       id: data.user.id,
       email: data.user.email,
-      full_name: fullName,
-      role: role
+      full_name: fullName
     })
     
     if (profileError) {

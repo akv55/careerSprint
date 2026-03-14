@@ -1,253 +1,211 @@
 'use client';
 
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Brain, FileText, TrendingUp, ChevronDown } from "lucide-react";
+import { motion } from 'framer-motion';
+import { ChevronDown, Upload, Settings, LibraryBig, CheckSquare } from "lucide-react";
 import LandingNavbar from '@/components/layouts/navbar';
 import LandingFooter from '@/components/layouts/footer';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#f5f8ff] via-white to-[#fff5ec] overflow-hidden">
+    <main className="min-h-screen bg-[#fafbfc] text-gray-900 selection:bg-yellow-300 relative">
+      {/* Global Background Dots */}
+      <div className="fixed inset-0 bg-[radial-gradient(#d1d5db_2px,transparent_2px)] [background-size:24px_24px] opacity-60 pointer-events-none z-0"></div>
 
       {/* Navigation */}
       <LandingNavbar />
 
       {/* Hero Section */}
-      <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28 text-center h-screen justify-center items-center flex flex-col">
-
-        {/* Glow Background */}
-        <div className="absolute w-96 h-96 bg-[#0F6FFF]/20 blur-3xl rounded-full -top-10 -left-20 animate-pulse"></div>
-        <div className="absolute w-96 h-96 bg-[#FF8A21]/20 blur-3xl rounded-full -bottom-10 -right-20 animate-pulse"></div>
-
-        <motion.h2
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-5xl font-bold text-gray-900 mb-6 relative z-10"
-        >
-          Ace Your Interview with{' '}
-          <span className="bg-gradient-to-r from-[#0F6FFF] to-[#FF8A21] bg-clip-text text-transparent">
-            AI-Powered Preparation
-          </span>
-        </motion.h2>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto relative z-10"
-        >
-          Upload your CV, get AI analysis, take practice exams, and receive personalized training recommendations.
-        </motion.p>
+      <section className="relative z-10 w-full mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 min-h-[90vh] flex flex-col justify-center items-center text-center">
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="space-x-4 relative z-10"
+          transition={{ duration: 0.6 }}
+          className="relative z-10 space-y-8 max-w-4xl"
         >
-          <Link
-            href="/auth/register"
-            className="inline-block bg-gradient-to-r from-[#0F6FFF] to-[#FF8A21] text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:scale-105 hover:shadow-xl transition"
-          >
-            Get Started
-          </Link>
-          <Link
-            href="#how-it-works"
-            className="inline-block border-2 border-[#0F6FFF] text-[#0F6FFF] px-8 py-4 rounded-full font-semibold hover:border-[#FF8A21] hover:text-[#FF8A21] hover:bg-[#fff7f0] transition"
-          >
-            Learn More
-          </Link>
+          <div className="inline-block px-4 py-1.5 mb-2 border-2 border-gray-900 rounded-full bg-white font-bold text-sm shadow-[4px_4px_0px_0px_rgba(17,24,39,1)]">
+            🎯 Build Your Interview Confidence
+          </div>
+
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-accent tracking-tight leading-[1.1]">
+            Validate your skills. <br />
+            <span className="text-primary">Nail the interview.</span>
+          </h1>
+
+          <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-medium">
+            Extract your skills directly from your resume or enter them manually.
+            Generate limitless practice exams tailored to your domain—served in focused, 30-question sessions so you never burn out.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
+            <Link
+              href="/auth/register"
+              className="w-full sm:w-auto px-8 py-4 bg-accent text-white font-extrabold rounded-xl border-2 border-accent shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+            >
+              Start Practicing Now
+            </Link>
+            <button
+              onClick={() => {
+                document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="w-full sm:w-auto px-8 py-4 bg-white text-gray-900 font-bold rounded-xl border-2 border-gray-900 shadow-[4px_4px_0px_0px_rgba(17,24,39,1)] hover:shadow-[2px_2px_0px_0px_rgba(17,24,39,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+            >
+              See How It Works
+            </button>
+          </div>
         </motion.div>
+      </section>
 
+      {/* Feature Banner */}
+      <section className="bg-[#0F6FFF] border-y-2 border-gray-900 py-6 overflow-hidden hidden sm:flex relative z-10">
         <motion.div
-          className="mt-16 flex justify-center relative z-10"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1 }}
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{ repeat: Infinity, ease: "linear", duration: 45 }}
+          className="flex whitespace-nowrap w-max"
         >
-          <motion.button
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.95 }}
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            className="h-12 w-12 rounded-full bg-gradient-to-br from-[#0F6FFF] to-[#FF8A21] flex items-center justify-center shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0F6FFF]"
-            aria-label="Scroll down to features"
-            onClick={() => {
-              const el = document.getElementById('features');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            <ChevronDown className="h-6 w-6 text-white" />
-          </motion.button>
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="flex gap-12 px-6 items-center text-white font-black text-xl md:text-2xl uppercase tracking-widest">
+              <span>★ Unlimited Exams</span>
+              <span>★ 30 Questions Per Test</span>
+              <span>★ 100% Curated Bank</span>
+              <span>★ Endless Practice</span>
+            </div>
+          ))}
         </motion.div>
       </section>
 
       {/* About Section */}
-      <section id="about" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-          <div>
-            <p className="text-xs font-semibold tracking-[0.3em] uppercase text-[#8aa4ff] mb-3">
-              About CareerSprint
+      <section id="about" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="grid gap-12 lg:grid-cols-2 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="space-y-6"
+          >
+            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 leading-tight">
+              A straightforward path to interview readiness
+            </h2>
+            <p className="text-lg text-gray-600 font-medium">
+              CareerSprint eliminates the guesswork surrounding interview prep. You define your domain—either by extracting capabilities directly from your PDF resume using lightning-fast local parsing libraries, or by manually typing them in.
             </p>
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              Turning ambition into
-              <span className="text-[#0F6FFF]"> interview-ready impact</span>
-            </h1>
-            <p className="text-lg text-gray-600 mb-4">
-              CareerSprint is an advanced interview preparation platform designed to help candidates move from potential to performance with confidence.
+            <p className="text-lg text-gray-600 font-medium">
+              Every time you want to practice, we generate a fresh, comprehensive 30-question exam pulled strictly from verified, industry-standard question banks. You can take as many unique tests as you need to hone your expertise.
             </p>
-            <p className="text-lg text-gray-600 mb-6">
-              Using modern AI, we read between the lines of your CV, uncover strengths and blind spots, and translate that into tailored exams and training plans so every practice session brings you closer to the offer.
-            </p>
-            <div className="flex flex-wrap gap-6">
-              <div>
-                <p className="text-3xl font-extrabold text-[#0F6FFF]">+10k</p>
-                <p className="text-sm text-gray-600">Profiles analyzed</p>
-              </div>
-              <div>
-                <p className="text-3xl font-extrabold text-[#FF8A21]">82%</p>
-                <p className="text-sm text-gray-600">Report higher confidence</p>
-              </div>
-              <div>
-                <p className="text-3xl font-extrabold text-gray-900">24/7</p>
-                <p className="text-sm text-gray-600">AI support at your pace</p>
-              </div>
-            </div>
-          </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl bg-white/90 p-6 shadow-sm backdrop-blur border border-[#e4ecff]">
-              <h3 className="text-base font-semibold text-gray-900 mb-2">Human-centred design</h3>
-              <p className="text-sm text-gray-600">
-                Clear language, structured flows, and focused insights designed for busy candidates.
-              </p>
-            </div>
-            <div className="rounded-2xl bg-gradient-to-br from-[#0F6FFF] to-[#FF8A21] p-[1px] shadow-sm">
-              <div className="h-full rounded-2xl bg-white/95 p-6">
-                <h3 className="text-base font-semibold text-gray-900 mb-2">AI that explains</h3>
-                <p className="text-sm text-gray-600">
-                  Not just scores—CareerSprint gives you context, reasoning, and next best steps.
-                </p>
+            <div className="flex flex-wrap gap-4 pt-4">
+              <div className="p-6 bg-white border-2 border-gray-900 rounded-xl shadow-[4px_4px_0px_0px_rgba(17,24,39,1)] flex-1 min-w-[120px]">
+                <p className="text-4xl font-black text-[#0F6FFF]">30</p>
+                <p className="text-xs sm:text-sm font-bold text-gray-700 mt-2 uppercase tracking-wide">Questions <br /> per Session</p>
+              </div>
+              <div className="p-6 bg-white border-2 border-gray-900 rounded-xl shadow-[4px_4px_0px_0px_rgba(17,24,39,1)] flex-1 min-w-[120px]">
+                <p className="text-4xl font-black text-[#FF8A21]">∞</p>
+                <p className="text-xs sm:text-sm font-bold text-gray-700 mt-2 uppercase tracking-wide">Unlimited <br /> Practice</p>
+              </div>
+              <div className="p-6 bg-[#0F6FFF] border-2 border-gray-900 rounded-xl shadow-[4px_4px_0px_0px_rgba(17,24,39,1)] flex-1 min-w-[120px]">
+                <p className="text-4xl font-black text-white">100%</p>
+                <p className="text-xs sm:text-sm font-bold text-blue-100 mt-2 uppercase tracking-wide">Data <br /> Privacy</p>
               </div>
             </div>
-            <div className="rounded-2xl bg-white/90 p-6 shadow-sm backdrop-blur border border-[#ffe2c3]">
-              <h3 className="text-base font-semibold text-gray-900 mb-2">For every stage</h3>
-              <p className="text-sm text-gray-600">
-                From first job to leadership roles, adapt the difficulty and focus to your path.
-              </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+          >
+            <div className="bg-white p-8 rounded-2xl border-2 border-gray-900 shadow-[4px_4px_0px_0px_rgba(17,24,39,1)] hover:-translate-y-2 transition-transform duration-300">
+              <div className="mb-4 inline-block p-3 bg-blue-100 border-2 border-blue-200 rounded-xl">
+                <Upload className="h-8 w-8 text-[#0F6FFF]" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Resume Parsing</h3>
+              <p className="text-sm text-gray-600 font-medium">We extract text locally from your PDF and quickly identify key frameworks and skill sets.</p>
             </div>
-            <div className="rounded-2xl bg-[#0F6FFF]/5 p-6 border border-[#e4ecff]">
-              <h3 className="text-base font-semibold text-gray-900 mb-2">Ethical & private</h3>
-              <p className="text-sm text-gray-600">
-                Your data is used only to improve your preparation—never sold or shared.
-              </p>
+
+            <div className="bg-white p-8 rounded-2xl border-2 border-gray-900 shadow-[4px_4px_0px_0px_rgba(17,24,39,1)] hover:-translate-y-2 transition-transform duration-300">
+              <div className="mb-4 inline-block p-3 bg-orange-100 border-2 border-orange-200 rounded-xl">
+                <Settings className="h-8 w-8 text-[#FF8A21]" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Manual Control</h3>
+              <p className="text-sm text-gray-600 font-medium">Prefer setting the rules? Type in your target role and domains manually to focus the test.</p>
             </div>
-          </div>
+
+            <div className="bg-white p-8 rounded-2xl border-2 border-gray-900 shadow-[4px_4px_0px_0px_rgba(17,24,39,1)] hover:-translate-y-2 transition-transform duration-300 sm:col-span-2">
+              <div className="mb-4 inline-block p-3 bg-green-100 border-2 border-green-200 rounded-xl">
+                <LibraryBig className="h-8 w-8 text-green-600" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Curated Question Bank</h3>
+              <p className="text-sm text-gray-600 font-medium">Every practice exam is compiled from a massive database of vetted, high-quality interview questions designed to challenge you just like a real technical interview would.</p>
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="relative py-28 bg-gradient-to-b from-white to-[#f6f4ff] overflow-hidden">
-
-        {/* Background Glow Blobs */}
-        <div className="absolute w-96 h-96 bg-[#0F6FFF]/10 blur-3xl rounded-full top-10 left-20 animate-pulse"></div>
-        <div className="absolute w-96 h-96 bg-[#FF8A21]/10 blur-3xl rounded-full bottom-10 right-20 animate-pulse"></div>
+      {/* How It Works Section */}
+      <section id="how-it-works" className="relative z-10 bg-gray-900 text-white py-24 border-y-2 border-gray-900 overflow-hidden">
+        {/* Decorative Grid on dark background */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:64px_64px] bg-fixed pointer-events-none"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-
           <div className="text-center mb-16">
-            <h3 className="text-4xl sm:text-5xl font-bold text-gray-900">
-              Why Choose  <span className="bg-gradient-to-r from-[#0F6FFF] to-[#FF8A21] bg-clip-text text-transparent">CareerSprint?</span>
-            </h3>
-            <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
-              AI-driven tools crafted to turn your CV into measurable career growth.
+            <h2 className="text-4xl md:text-5xl font-black mb-4">
+              How CareerSprint Works
+            </h2>
+            <p className="text-lg text-gray-400 max-w-2xl mx-auto font-medium">
+              Start practicing in minutes. No complex setups, just pure interview prep.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-12">
+          <div className="grid md:grid-cols-4 gap-8">
             {[
-              { title: 'Smart CV Analysis', desc: 'AI-powered insights on your resume', icon: <Brain className="h-6 w-6 text-white" /> },
-              { title: 'Practice Exams', desc: 'Industry-specific interview questions', icon: <FileText className="h-6 w-6 text-white" /> },
-              { title: 'Personalized Training', desc: 'Tailored recommendations based on results', icon: <TrendingUp className="h-6 w-6 text-white" /> },
-            ].map((feature, index) => (
+              { step: '01', title: 'Register', desc: 'Securely create a free account to track your progress over time.' },
+              { step: '02', title: 'Parse & Setup', desc: 'Upload your CV or enter your skills. We use fast local logic to determine your domain.' },
+              { step: '03', title: 'Take Exam', desc: 'Dive into a fresh 30-question test randomized from our extensive library.' },
+              { step: '04', title: 'Review & Repeat', desc: 'Check correct solutions, patch your knowledge gaps, and generate another test.' },
+            ].map((item, i) => (
               <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 50 }}
+                key={item.step}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.2 }}
                 viewport={{ once: true }}
-                whileHover={{ scale: 1.05 }}
-                className="group relative rounded-3xl p-[1px] bg-gradient-to-br from-[#0F6FFF] to-[#FF8A21] shadow-xl"
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -8 }}
+                className="bg-gray-800 border-2 border-gray-700 p-8 rounded-2xl relative overflow-hidden transition-all duration-300 hover:border-gray-500 hover:shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)]"
               >
-                <div className="rounded-3xl bg-white/90 backdrop-blur-lg p-8 h-full">
-                  <div className="mb-6 h-14 w-14 flex items-center justify-center rounded-2xl bg-gradient-to-br from-[#0F6FFF] to-[#FF8A21] text-white shadow-md text-xl">
-                    {feature.icon}
-                  </div>
-
-                  <h4 className="font-semibold text-xl mb-4 text-gray-900 group-hover:text-[#0F6FFF] transition">
-                    {feature.title}
-                  </h4>
-
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {feature.desc}
-                  </p>
+                <div className="text-7xl font-black text-gray-700/30 absolute -right-4 -bottom-4 select-none">
+                  {item.step}
                 </div>
+                <h3 className="text-xl font-bold mb-3 relative z-10 text-white">{item.title}</h3>
+                <p className="text-gray-400 text-sm font-medium relative z-10 leading-relaxed">
+                  {item.desc}
+                </p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section id="how-it-works" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center mb-12">
-          <p className="text-xs font-semibold tracking-[0.3em] uppercase text-[#8aa4ff] mb-3">
-            Step-by-step journey
-          </p>
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            From upload to
-            <span className="text-[#0F6FFF]"> interview-ready</span>
+      {/* CTA Section */}
+      <section className="relative z-10 py-24 bg-[#FF8A21] border-b-2 border-gray-900 border-t-2 overflow-hidden">
+        {/* Local Background Dots */}
+        <div className="absolute inset-0 bg-[radial-gradient(rgba(0,0,0,0.15)_2px,transparent_2px)] [background-size:24px_24px] bg-fixed pointer-events-none"></div>
+
+        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-6">
+            Ready to test your limits?
           </h2>
-          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
-            CareerSprint guides you through a clear, repeatable loop so every session improves both your CV and your interview performance.
+          <p className="text-xl text-gray-900/80 font-bold mb-10 max-w-2xl mx-auto">
+            Join thousands of candidates who are leveling up their interview skills with targeted question banks.
           </p>
-        </div>
-
-        <div className="relative max-w-4xl mx-auto">
-          <div className="absolute left-5 top-0 bottom-0 hidden sm:block">
-            <div className="h-full w-[2px] bg-gradient-to-b from-[#0F6FFF] via-[#8aa4ff] to-[#FF8A21]" />
-          </div>
-
-          <div className="space-y-8 sm:space-y-10">
-            {[
-              { step: 1, title: 'Register', desc: 'Create your account with email and password' },
-              { step: 2, title: 'Upload CV', desc: 'Upload your resume for AI analysis' },
-              { step: 3, title: 'Get Insights', desc: 'Receive detailed CV analysis and recommendations' },
-              { step: 4, title: 'Take Exam', desc: 'Complete practice exams tailored to your profile' },
-              { step: 5, title: 'Get Results', desc: 'View detailed evaluation and performance metrics' },
-              { step: 6, title: 'Training Plan', desc: 'Receive personalized training recommendations' },
-            ].map((item) => (
-              <div
-                key={item.step}
-                className="relative flex gap-4 sm:gap-8 rounded-2xl bg-white/90 p-5 sm:p-6 shadow-sm backdrop-blur border border-[#e4ecff]"
-              >
-                <div className="flex-shrink-0">
-                  <div className="relative">
-                    <div className="hidden sm:block absolute -left-5 top-1 h-3 w-3 rounded-full bg-white" />
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#0F6FFF] to-[#FF8A21] text-white rounded-full flex items-center justify-center text-sm sm:text-lg font-bold shadow-md">
-                      {item.step}
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold mb-1 text-gray-900">{item.title}</h3>
-                  <p className="text-sm text-gray-600">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <Link
+            href="/auth/register"
+            className="inline-flex items-center gap-3 px-10 py-5 bg-white text-gray-900 font-black text-lg rounded-xl border-4 border-gray-900 shadow-[6px_6px_0px_0px_rgba(17,24,39,1)] hover:shadow-[2px_2px_0px_0px_rgba(17,24,39,1)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
+          >
+            Create Your Free Account
+            <CheckSquare className="w-6 h-6" />
+          </Link>
         </div>
       </section>
 
