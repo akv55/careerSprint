@@ -1,11 +1,10 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { getUserDomain } from './actions'
+import { getTestHistory } from './exam-actions'
 import SetupWizard from './setup-wizard'
-import DashboardTopbar from './components/dashboard-topbar'
-import DashboardSidebar from './components/dashboard-sidebar'
-import DomainOverview from './components/domain-overview'
-import ActionCards from './components/action-cards'
+import DashboardLayoutWrapper from './components/dashboard-layout-wrapper'
+import DashboardHome from './components/dashboard-home'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -20,47 +19,45 @@ export default async function DashboardPage() {
     .single()
 
   const userDomain = await getUserDomain()
+  const displayName = profile?.full_name || user.email || 'User'
+
+  // Compute stats for the dashboard
+  let stats = { examsTaken: 0, bestScore: null as number | null, avgTimeSecs: null as number | null }
+  let recentSessions: any[] = []
+  if (userDomain) {
+    const history = await getTestHistory()
+    stats.examsTaken = history.length
+    recentSessions = history.slice(0, 5)
+    if (history.length > 0) {
+      stats.bestScore = Math.max(...history.map(h => Math.round((h.score / h.total) * 100)))
+      const totalTime = history.reduce((sum, h) => sum + (h.time_taken_secs || 0), 0)
+      stats.avgTimeSecs = Math.round(totalTime / history.length)
+    }
+  }
 
   return (
-    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
-
-      <DashboardTopbar
-        fullName={profile?.full_name ?? null}
-        email={user.email!}
-        domain={userDomain?.domain ?? null}
-      />
-
-      {/* Body: sidebar + main content, fills remaining height */}
-      <div className="flex-1 flex overflow-hidden">
-
-        {userDomain && <DashboardSidebar />}
-
-        <main className="flex-1 overflow-y-auto min-w-0">
-          <div className="py-10 px-6 mx-auto">
-
-            <h1 className="text-3xl font-extrabold text-gray-900 mb-8 tracking-tight">
-              Welcome back, {profile?.full_name || user.email}!
-            </h1>
-
-            {!userDomain ? (
-              <div className="max-w-2xl mx-auto">
-                <SetupWizard />
-              </div>
-            ) : (
-              <div className="animate-in fade-in duration-500">
-                <DomainOverview
-                  domain={userDomain.domain}
-                  secondaryDomain={userDomain.secondary_domain}
-                  skills={userDomain.skills}
-                />
-                <ActionCards />
-              </div>
-            )}
-
-          </div>
-        </main>
-
-      </div>
-    </div>
+    <DashboardLayoutWrapper 
+      profileFullName={profile?.full_name} 
+      email={user.email!} 
+      domain={userDomain?.domain}
+    >
+      {!userDomain ? (
+        <div className="max-w-2xl mx-auto">
+          <SetupWizard />
+        </div>
+      ) : (
+        <div className="animate-in fade-in duration-500">
+          <DashboardHome
+            domain={userDomain.domain}
+            secondaryDomain={userDomain.secondary_domain}
+            skills={userDomain.skills}
+            userName={displayName}
+            stats={stats}
+            recentSessions={recentSessions}
+          />
+        </div>
+      )}
+    </DashboardLayoutWrapper>
   )
 }
+

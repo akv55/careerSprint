@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
+import { signOutUser } from '../actions'
 
 interface TopbarProps {
   fullName: string | null
@@ -52,12 +51,7 @@ export default function DashboardTopbar({ fullName, email, domain }: TopbarProps
             </div>
 
             {/* Sign Out */}
-            <form action={async () => {
-              'use server'
-              const supabase = await createClient()
-              await supabase.auth.signOut()
-              redirect('/auth/login')
-            }}>
+            <form action={signOutUser}>
               <button
                 type="submit"
                 className="text-xs font-semibold text-gray-500 hover:text-gray-900 border border-gray-200 rounded-lg py-1.5 px-3 hover:bg-gray-50 transition-colors"

@@ -1,89 +1,99 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { useState, useRef } from 'react'
+import { Loader2, UploadCloud, FileText, CheckCircle2, AlertCircle } from 'lucide-react'
 
 interface CvUploadFormProps {
-  onSuccess?: (data: any) => void;
+  onSuccess?: (data: any) => void
 }
 
 export default function CvUploadForm({ onSuccess }: CvUploadFormProps) {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [fileName, setFileName] = useState<string | null>(null)
+  const [dragging, setDragging] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const handleFile = (file: File | null) => {
+    if (!file) return
+    if (file.type !== 'application/pdf') { setError('Only PDF files are accepted.'); return }
+    if (file.size > 10 * 1024 * 1024) { setError('File must be under 10MB.'); return }
+    setError(null)
+    setFileName(file.name)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault(); setDragging(false)
+    handleFile(e.dataTransfer.files[0] ?? null)
+    if (inputRef.current && e.dataTransfer.files[0]) {
+      const dt = new DataTransfer()
+      dt.items.add(e.dataTransfer.files[0])
+      inputRef.current.files = dt.files
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    const formData = new FormData(e.currentTarget);
-    const file = formData.get('file') as File | null;
-
-    if (!file || file.size === 0) {
-      setError('Please select a file to upload');
-      setLoading(false);
-      return;
-    }
-
+    e.preventDefault()
+    if (!inputRef.current?.files?.[0]) { setError('Please select a file to upload'); return }
+    setLoading(true); setError(null)
+    const formData = new FormData()
+    formData.append('file', inputRef.current.files[0])
     try {
-      const response = await fetch('/api/cv/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to analyze CV');
-      }
-      
-      if (onSuccess) {
-        onSuccess(data);
-      }
+      const res = await fetch('/api/cv/upload', { method: 'POST', body: formData })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to analyze CV')
+      onSuccess?.(data)
     } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred');
+      setError(err.message || 'An unexpected error occurred')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
-    <div className="mt-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Drop zone */}
+      <div
+        className={`relative border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all ${
+          dragging ? 'border-primary bg-primary/5' : fileName ? 'border-green-400 bg-green-50' : 'border-gray-200 bg-gray-50 hover:border-primary/50 hover:bg-primary/5'
+        }`}
+        onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={handleDrop}
+        onClick={() => inputRef.current?.click()}
+      >
+        <input ref={inputRef} type="file" name="file" accept="application/pdf" className="hidden"
+          onChange={(e) => handleFile(e.target.files?.[0] ?? null)} disabled={loading} />
 
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-        <div>
-          <input
-            id="cv-upload"
-            name="file"
-            type="file"
-            accept="application/pdf"
-            className="block w-full text-sm text-gray-900 border border-gray-300 rounded-xl cursor-pointer focus:outline-none focus:border-blue-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100 shadow-sm transition-all"
-            disabled={loading}
-          />
-          <p className="mt-2 text-sm font-medium text-gray-500">Max file size: 10MB (PDF Only).</p>
-        </div>
-
-        {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm border border-red-200 font-medium">
-            {error}
-          </div>
+        {fileName ? (
+          <>
+            <CheckCircle2 className="w-10 h-10 text-green-500" />
+            <p className="text-sm font-bold text-green-700 text-center">{fileName}</p>
+            <p className="text-xs text-gray-500">Click to change file</p>
+          </>
+        ) : (
+          <>
+            <UploadCloud className={`w-10 h-10 transition-colors ${dragging ? 'text-primary' : 'text-gray-400'}`} />
+            <div className="text-center">
+              <p className="text-sm font-semibold text-gray-700">Drop your PDF here, or <span className="text-primary">browse</span></p>
+              <p className="text-xs text-gray-400 mt-1">PDF only · Max 10MB</p>
+            </div>
+          </>
         )}
+      </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="flex justify-center items-center gap-2 rounded-xl bg-accent px-4 py-3 text-sm font-bold text-white shadow-sm hover:opacity-90 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
-        >
-          {loading ? (
-            <span className="flex items-center">
-              <Loader2 className="animate-spin -ml-1 mr-2 flex-shrink-0 h-5 w-5" />
-              Processing...
-            </span>
-          ) : (
-            'Extract Skills'
-          )}
-        </button>
-      </form>
-    </div>
-  );
+      {error && (
+        <div className="flex items-center gap-2 bg-red-50 text-red-600 p-3 rounded-xl text-sm border border-red-200">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+          {error}
+        </div>
+      )}
+
+      <button type="submit" disabled={loading || !fileName}
+        className="w-full flex justify-center items-center gap-2 rounded-xl bg-accent px-4 py-3.5 text-sm font-bold text-white shadow-sm hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {loading ? <><Loader2 className="animate-spin h-4 w-4" /> Analysing CV...</> : <><FileText className="h-4 w-4" /> Extract Skills from CV</>}
+      </button>
+    </form>
+  )
 }
