@@ -30,17 +30,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --base-100: #071427;
-    --base-200: #0e2342;
-    --base-300: #16305a;
-    --base-content: #eef3ff;
-    --secondary: #0b1c33;
-    --muted: color-mix(in oklab, var(--base-content) 12%, transparent);
-  }
-}
-
 @layer base {
   body {
     background: var(--base-100);

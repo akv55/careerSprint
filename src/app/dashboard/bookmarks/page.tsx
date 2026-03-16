@@ -1,21 +1,23 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
+import { getBookmarkedQuestions } from '../bookmark-actions'
 import { getUserDomain } from '../actions'
 import DashboardLayoutWrapper from '../components/dashboard-layout-wrapper'
-import ProfileClient from './profile-client'
+import BookmarksClient from './bookmarks-client'
 
-export default async function ProfilePage() {
+export default async function BookmarksPage() {
   const supabase = await createClient()
   const { data: { user }, error } = await supabase.auth.getUser()
   if (error || !user) redirect('/auth/login')
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('*')
+    .select('full_name')
     .eq('id', user.id)
     .single()
     
   const userDomain = await getUserDomain()
+  const bookmarks = await getBookmarkedQuestions()
 
   return (
     <DashboardLayoutWrapper 
@@ -23,10 +25,7 @@ export default async function ProfilePage() {
       email={user.email!} 
       domain={userDomain?.domain}
     >
-      <ProfileClient 
-        user={{ email: user.email!, fullName: profile?.full_name || '' }}
-        userDomain={userDomain}
-      />
+      <BookmarksClient initialBookmarks={bookmarks} />
     </DashboardLayoutWrapper>
   )
 }

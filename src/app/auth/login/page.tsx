@@ -1,63 +1,33 @@
-'use client';
+import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
+import LoginForm from './login-form'
 
-import { useState } from 'react';
-import Link from 'next/link';
+export default async function LoginPage() {
+  const supabase = await createClient()
 
-export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implement login logic
-    console.log('Login attempt:', { email, password });
-  };
+  // If user is already logged in, redirect to dashboard
+  const { data: { session } } = await supabase.auth.getSession()
+  
+  if (session) {
+    redirect('/dashboard')
+  }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center">Login</h1>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-600"
-              placeholder="your@email.com"
-              required
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-600"
-              placeholder="••••••••"
-              required
-            />
-          </div>
-          
-          <button
-            type="submit"
-            className="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition mt-6"
-          >
-            Login
-          </button>
-        </form>
+    <div className="relative flex min-h-screen flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#fafbfc] selection:bg-yellow-300">
+      {/* Global Background Dots */}
+      <div className="absolute inset-0 bg-[radial-gradient(#d1d5db_2px,transparent_2px)] [background-size:24px_24px] opacity-60 pointer-events-none z-0"></div>
 
-        <p className="text-center text-gray-600 mt-4">
-          Don&apos;t have an account?{' '}
-          <Link href="/auth/register" className="text-indigo-600 font-semibold hover:text-indigo-700">
-            Register here
-          </Link>
-        </p>
+      <div className="relative z-10 w-full max-w-md space-y-8 bg-white p-8 rounded-2xl border-4 border-gray-900 shadow-[8px_8px_0px_0px_rgba(17,24,39,1)]">
+        <div className="text-center">
+          <h2 className="mt-6 text-4xl font-black text-gray-900 tracking-tight">
+            Welcome back
+          </h2>
+          <p className="mt-2 text-sm font-bold text-gray-600">
+            Sign in to continue to your dashboard
+          </p>
+        </div>
+        <LoginForm />
       </div>
-    </main>
-  );
+    </div>
+  )
 }
