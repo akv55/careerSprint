@@ -40,12 +40,19 @@ export default function CvUploadForm({ onSuccess }: CvUploadFormProps) {
     formData.append('file', inputRef.current.files[0])
     try {
       const res = await fetch('/api/cv/upload', { method: 'POST', body: formData })
-      const data = await res.json()
-      if (!res.ok) {
-        const detailMsg = data.details ? `: ${data.details}` : ''
-        throw new Error(`${data.error || 'Failed to analyze CV'}${detailMsg}`)
+      
+      const contentType = res.headers.get('content-type')
+      if (contentType && contentType.includes('application/json')) {
+        const data = await res.json()
+        if (!res.ok) {
+          const detailMsg = data.details ? `: ${data.details}` : ''
+          throw new Error(`${data.error || 'Failed to analyze CV'}${detailMsg}`)
+        }
+        onSuccess?.(data)
+      } else {
+        // If it's not JSON, it's likely an HTML error page from Vercel/Next.js
+        throw new Error(`Server error (${res.status}): The server returned an invalid response format. Please check the deployment logs.`)
       }
-      onSuccess?.(data)
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred')
     } finally {

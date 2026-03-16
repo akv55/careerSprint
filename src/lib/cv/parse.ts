@@ -1,14 +1,10 @@
-import { promises as fs } from 'fs';
 import * as pdfjs from 'pdfjs-dist/legacy/build/pdf.mjs';
 
-export async function parsePdf(filePath: string): Promise<{ text: string; words: string[]; numPages: number; info: object }> {
+export async function parsePdf(data: Uint8Array): Promise<{ text: string; words: string[]; numPages: number; info: object }> {
   try {
-    const data = await fs.readFile(filePath);
-    const uint8Array = new Uint8Array(data);
-
     // Use disableWorker: true to avoid issues with worker files in serverless environments
     const loadingTask = (pdfjs as any).getDocument({ 
-      data: uint8Array,
+      data: data,
       disableWorker: true,
       isEvalAndRefCheckDisabled: true,
       useSystemFonts: true,
