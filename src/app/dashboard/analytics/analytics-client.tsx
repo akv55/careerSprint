@@ -90,7 +90,7 @@ export default function AnalyticsClient({ data }: { data: AnalyticsData }) {
                 <YAxis domain={[0, 100]} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#9ca3af' }} />
                 <Tooltip 
                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                  formatter={(value: number) => [`${value}%`, 'Score']}
+                  formatter={(value: any) => [`${value}%`, 'Score']}
                 />
                 <Area type="monotone" dataKey="scorePct" stroke="#4f46e5" strokeWidth={3} fillOpacity={1} fill="url(#colorScore)" />
               </AreaChart>
@@ -119,7 +119,7 @@ export default function AnalyticsClient({ data }: { data: AnalyticsData }) {
                   <PolarAngleAxis dataKey="skill" tick={{ fontSize: 11, fill: '#6b7280' }} />
                   <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                   <Radar name="Accuracy" dataKey="accuracy" stroke="#4f46e5" fill="#4f46e5" fillOpacity={0.4} />
-                  <Tooltip formatter={(val: number) => [`${val}%`, 'Accuracy']} />
+                  <Tooltip formatter={(val: any) => [`${val}%`, 'Accuracy']} />
                 </RadarChart>
               </ResponsiveContainer>
             </div>
@@ -172,7 +172,7 @@ export default function AnalyticsClient({ data }: { data: AnalyticsData }) {
                 <ZAxis range={[100, 100]} />
                 <Tooltip cursor={{ strokeDasharray: '3 3' }} 
                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                  formatter={(val: number, name: string) => [name === 'Time' ? `${val} m` : `${val}%`, name]}
+                  formatter={(val: any, name: any) => [name === 'Time' ? `${val} m` : `${val}%`, name]}
                 />
                 <Scatter name="Exams" data={data.timeVsScore} fill="#f59e0b" />
               </ScatterChart>
