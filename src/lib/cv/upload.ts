@@ -1,8 +1,9 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import os from 'os';
 import { v4 as uuidv4 } from 'uuid';
 
-const UPLOADS_DIR = path.join(process.cwd(), 'tmp', 'uploads');
+const UPLOADS_DIR = path.join(os.tmpdir(), 'career-sprint-uploads');
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 export async function saveUploadedFile(file: File): Promise<{ filePath: string; originalName: string }> {

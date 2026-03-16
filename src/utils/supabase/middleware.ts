@@ -40,8 +40,11 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith('/auth') &&
     request.nextUrl.pathname !== '/'
   ) {
-    // no user, potentially redirect to login page if they try to access a protected route
-    // we only allow access to root '/' and any paths under '/auth'
+    // If it's an API request, return 401 Unauthorized instead of redirecting to HTML login page
+    if (request.nextUrl.pathname.startsWith('/api')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const url = request.nextUrl.clone()
     url.pathname = '/auth/login'
     return NextResponse.redirect(url)
