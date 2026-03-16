@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { getTestSessionById } from '../../../exam-actions'
 import { getUserDomain } from '../../../actions'
+import { getUserBookmarksForQuestions } from '../../../bookmark-actions'
 import ExamResult from './exam-result'
 import DashboardLayoutWrapper from '../../../components/dashboard-layout-wrapper'
 
@@ -22,13 +23,19 @@ export default async function ResultPage({ params }: { params: Promise<{ session
   const data = await getTestSessionById(sessionId)
   if (!data) redirect('/dashboard')
 
+  const bookmarkMap = await getUserBookmarksForQuestions(data.session.question_ids)
+
   return (
     <DashboardLayoutWrapper 
       profileFullName={profile?.full_name} 
       email={user.email!} 
       domain={userDomain?.domain}
     >
-      <ExamResult session={data.session} questions={data.questions} />
+      <ExamResult 
+        session={data.session} 
+        questions={data.questions} 
+        initialBookmarks={bookmarkMap}
+      />
     </DashboardLayoutWrapper>
   )
 }

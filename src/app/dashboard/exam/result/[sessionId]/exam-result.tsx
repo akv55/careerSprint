@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { CheckCircle2, XCircle, Trophy, Clock, ArrowLeft, ChevronDown, ChevronUp, RotateCcw } from 'lucide-react'
+import { CheckCircle2, XCircle, Trophy, Clock, ArrowLeft, ChevronDown, ChevronUp, RotateCcw, Bookmark, BookmarkCheck, Save, Loader2 } from 'lucide-react'
+import { toggleBookmark, updateBookmarkNote } from '../../../bookmark-actions'
 
 interface Question {
   id: string; domain: string; skill: string; difficulty: string
@@ -16,12 +17,50 @@ interface Session {
   answers: Record<string, string>; question_ids: string[]
 }
 
-interface Props { session: Session; questions: Question[] }
+interface Props { 
+  session: Session; 
+  questions: Question[]; 
+  initialBookmarks: Record<string, { bookmarked: boolean; note: string }> 
+}
 
-export default function ExamResult({ session, questions }: Props) {
+export default function ExamResult({ session, questions, initialBookmarks }: Props) {
   const [expanded, setExpanded] = useState<string | null>(null)
+  const [bookmarks, setBookmarks] = useState(initialBookmarks)
+  const [savingNote, setSavingNote] = useState<string | null>(null)
+  
   const pct = Math.round((session.score / session.total) * 100)
   const fmtTime = (s: number) => `${Math.floor(s / 60)}m ${s % 60}s`
+
+  const handleToggleBookmark = async (qId: string) => {
+    // Optimistic update
+    const isBookmarked = !!bookmarks[qId]?.bookmarked
+    setBookmarks(prev => ({
+      ...prev,
+      [qId]: { ...prev[qId], bookmarked: !isBookmarked, note: prev[qId]?.note || '' }
+    }))
+
+    const res = await toggleBookmark(qId)
+    if (res.error) {
+      // Rollback
+      setBookmarks(prev => ({
+        ...prev,
+        [qId]: { ...prev[qId], bookmarked: isBookmarked }
+      }))
+    }
+  }
+
+  const handleSaveNote = async (qId: string, note: string) => {
+    setSavingNote(qId)
+    const res = await updateBookmarkNote(qId, note)
+    if (!res.error) {
+      setBookmarks(prev => ({
+        ...prev,
+        [qId]: { ...prev[qId], note }
+      }))
+    }
+    setSavingNote(null)
+  }
+
 
   // Sort questions to match original order
   const orderedQs = session.question_ids.map(id => questions.find(q => q.id === id)).filter(Boolean) as Question[]
@@ -124,28 +163,61 @@ export default function ExamResult({ session, questions }: Props) {
                   </button>
 
                   {isOpen && (
-                    <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-2">
-                      {(['a', 'b', 'c', 'd'] as const).map(opt => {
-                        const isUser = userAns === opt
-                        const isRight = q.correct === opt
-                        return (
-                          <div key={opt} className={`p-3 rounded-lg text-sm flex items-start gap-2 ${
-                            isRight ? 'bg-green-50 border border-green-200' :
-                            isUser && !isRight ? 'bg-red-50 border border-red-200' :
-                            'bg-gray-50 border border-transparent'}`}>
-                            <span className={`font-bold text-xs mt-0.5 ${isRight ? 'text-green-600' : isUser ? 'text-red-500' : 'text-gray-400'}`}>
-                              {opt.toUpperCase()}
-                            </span>
-                            <span className="text-gray-700">{q.options[opt]}</span>
-                            {isRight && <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0 ml-auto mt-0.5" />}
-                            {isUser && !isRight && <XCircle className="w-4 h-4 text-red-500 flex-shrink-0 ml-auto mt-0.5" />}
-                          </div>
-                        )
-                      })}
+                    <div className="px-4 pb-4 border-t border-gray-100 pt-4 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Options</p>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); handleToggleBookmark(q.id); }}
+                          className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg border transition-all ${
+                            bookmarks[q.id]?.bookmarked 
+                              ? 'bg-amber-50 text-amber-600 border-amber-200 shadow-sm' 
+                              : 'bg-white text-gray-400 border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          {bookmarks[q.id]?.bookmarked ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
+                          {bookmarks[q.id]?.bookmarked ? 'Bookmarked' : 'Bookmark'}
+                        </button>
+                      </div>
+
+                      <div className="space-y-2">
+                        {(['a', 'b', 'c', 'd'] as const).map(opt => {
+                          const isUser = userAns === opt
+                          const isRight = q.correct === opt
+                          return (
+                            <div key={opt} className={`p-3 rounded-lg text-sm flex items-start gap-2 ${
+                              isRight ? 'bg-green-50 border border-green-200' :
+                              isUser && !isRight ? 'bg-red-50 border border-red-200' :
+                              'bg-gray-50 border border-transparent'}`}>
+                              <span className={`font-bold text-xs mt-0.5 ${isRight ? 'text-green-600' : isUser ? 'text-red-500' : 'text-gray-400'}`}>
+                                {opt.toUpperCase()}
+                              </span>
+                              <span className="text-gray-700">{q.options[opt]}</span>
+                              {isRight && <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0 ml-auto mt-0.5" />}
+                              {isUser && !isRight && <XCircle className="w-4 h-4 text-red-500 flex-shrink-0 ml-auto mt-0.5" />}
+                            </div>
+                          )
+                        })}
+                      </div>
+
                       {q.explanation && (
-                        <div className="mt-2 p-3 bg-primary/5 rounded-lg border border-primary/10">
-                          <p className="text-xs font-bold text-primary mb-1">Explanation</p>
+                        <div className="p-3 bg-primary/5 rounded-lg border border-primary/10">
+                          <p className="text-[10px] font-bold text-primary mb-1 uppercase tracking-wider">Explanation</p>
                           <p className="text-sm text-gray-700">{q.explanation}</p>
+                        </div>
+                      )}
+
+                      {bookmarks[q.id]?.bookmarked && (
+                        <div className="p-4 bg-amber-50/50 rounded-xl border border-amber-100">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Study Notes</p>
+                            {savingNote === q.id && <Loader2 className="w-3 h-3 animate-spin text-amber-600" />}
+                          </div>
+                          <textarea 
+                            defaultValue={bookmarks[q.id]?.note}
+                            onBlur={(e) => handleSaveNote(q.id, e.target.value)}
+                            placeholder="Add a private note about this question (concepts to review, why you missed it, etc.)"
+                            className="w-full bg-white border border-amber-100 rounded-lg p-3 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-amber-400 transition-all min-h-[80px]"
+                          />
                         </div>
                       )}
                     </div>

@@ -2,13 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, FileText, History, BarChart2, User, Settings } from 'lucide-react'
+import { LayoutDashboard, FileText, History, BarChart2, User, Settings, Bookmark } from 'lucide-react'
 
 const navItems = [
   { name: 'Dashboard',      icon: LayoutDashboard, href: '/dashboard' },
   { name: 'Practice Exams', icon: FileText,         href: '/dashboard/exam' },
   { name: 'Test History',   icon: History,          href: '/dashboard/history' },
   { name: 'Analytics',      icon: BarChart2,        href: '/dashboard/analytics' },
+  { name: 'Saved Questions', icon: Bookmark,         href: '/dashboard/bookmarks' },
   { name: 'Profile',        icon: User,             href: '/dashboard/profile' },
   { name: 'Settings',       icon: Settings,         href: '/dashboard/settings' },
 ]

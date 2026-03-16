@@ -150,8 +150,8 @@ export default function DashboardHome({ domain, secondaryDomain, skills, userNam
                       {s.score}/{s.total} correct · {Math.floor(s.time_taken_secs / 60)}m {s.time_taken_secs % 60}s · <span className="capitalize">{s.mode}</span>
                     </p>
                   </div>
-                  <span className="text-xs text-gray-300 font-medium flex-shrink-0">{timeAgo}</span>
-                  <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gray-500 transition-colors flex-shrink-0" />
+                  <span className="text-xs text-gray-500 font-medium flex-shrink-0">{timeAgo}</span>
+                  <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-gray-500 transition-colors flex-shrink-0" />
                 </Link>
               )
             })
