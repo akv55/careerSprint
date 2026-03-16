@@ -57,7 +57,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Default to 500
-    return NextResponse.json({ error: 'Failed to upload or parse the file due to an internal error.' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Failed to upload or parse the file due to an internal error.',
+      details: error.message || String(error)
+    }, { status: 500 });
   } finally {
     // Phase 2: Cleanup ephemeral file
     if (filePath) {

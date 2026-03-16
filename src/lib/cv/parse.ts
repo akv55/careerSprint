@@ -1,15 +1,19 @@
 import { promises as fs } from 'fs';
-import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist/legacy/build/pdf.mjs';
-
-// Explicitly set the worker path for Node.js environments
-GlobalWorkerOptions.workerSrc = 'pdfjs-dist/legacy/build/pdf.worker.mjs';
+import * as pdfjs from 'pdfjs-dist/legacy/build/pdf.mjs';
 
 export async function parsePdf(filePath: string): Promise<{ text: string; words: string[]; numPages: number; info: object }> {
   try {
     const data = await fs.readFile(filePath);
     const uint8Array = new Uint8Array(data);
 
-    const loadingTask = getDocument({ data: uint8Array });
+    // Use disableWorker: true to avoid issues with worker files in serverless environments
+    const loadingTask = (pdfjs as any).getDocument({ 
+      data: uint8Array,
+      disableWorker: true,
+      isEvalAndRefCheckDisabled: true,
+      useSystemFonts: true,
+    });
+    
     const pdf = await loadingTask.promise;
 
     let fullText = '';

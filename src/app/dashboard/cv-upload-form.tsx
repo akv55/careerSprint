@@ -41,7 +41,10 @@ export default function CvUploadForm({ onSuccess }: CvUploadFormProps) {
     try {
       const res = await fetch('/api/cv/upload', { method: 'POST', body: formData })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to analyze CV')
+      if (!res.ok) {
+        const detailMsg = data.details ? `: ${data.details}` : ''
+        throw new Error(`${data.error || 'Failed to analyze CV'}${detailMsg}`)
+      }
       onSuccess?.(data)
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred')
