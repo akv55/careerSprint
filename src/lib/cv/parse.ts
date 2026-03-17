@@ -1,3 +1,4 @@
+import './pdf-polyfills';
 import * as pdfjs from 'pdfjs-dist/legacy/build/pdf.mjs';
 
 export async function parsePdf(data: Uint8Array): Promise<{ text: string; words: string[]; numPages: number; info: object }> {
