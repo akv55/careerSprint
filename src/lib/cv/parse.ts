@@ -1,48 +1,29 @@
-import './pdf-polyfills';
-import * as pdfjs from 'pdfjs-dist/legacy/build/pdf.mjs';
+// @ts-expect-error - no types available for inner import
+import pdf from 'pdf-parse/lib/pdf-parse.js';
 
 export async function parsePdf(data: Uint8Array): Promise<{ text: string; words: string[]; numPages: number; info: object }> {
   try {
-    // Use disableWorker: true to avoid issues with worker files in serverless environments
-    const loadingTask = (pdfjs as any).getDocument({ 
-      data: data,
-      disableWorker: true,
-      isEvalAndRefCheckDisabled: true,
-      useSystemFonts: true,
-    });
-    
-    const pdf = await loadingTask.promise;
+    const buffer = Buffer.from(data);
+    const result = await pdf(buffer);
 
-    let fullText = '';
-    const numPages = pdf.numPages;
-
-    for (let i = 1; i <= numPages; i++) {
-      const page = await pdf.getPage(i);
-      const textContent = await page.getTextContent();
-      const pageText = textContent.items
-        .map((item: any) => item.str)
-        .join(' ');
-      fullText += pageText + ' ';
-    }
-
+    const fullText = result.text || '';
     const trimmedText = fullText.trim();
+    
     if (trimmedText.length === 0) {
       throw new Error('PDF appears to be image-only with no extractable text');
     }
 
-    const words = trimmedText.split(/\s+/).filter(word => word.length > 0);
+    const words = trimmedText.split(/\s+/).filter((word: string) => word.length > 0);
 
-    let info = {};
-    try {
-      const metadata = await pdf.getMetadata();
-      info = metadata.info || {};
-    } catch (e) {
-      // metadata might not be available
-    }
-
-    return { text: trimmedText, words, numPages, info };
+    return { 
+      text: trimmedText, 
+      words, 
+      numPages: result.numpages || 1, 
+      info: result.info || {} 
+    };
   } catch (error: any) {
-    if (error.name === 'PasswordException') {
+    const errorMessage = error?.message || error?.name || '';
+    if (errorMessage.includes('Password') || errorMessage.includes('encrypted')) {
       throw new Error('PDF is password-protected');
     }
     // Re-throw generic or known errors
