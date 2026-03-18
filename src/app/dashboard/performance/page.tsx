@@ -1,11 +1,11 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { getBookmarkedQuestions } from '../bookmark-actions'
+import { getAnalyticsData } from '../analytics-actions'
 import { getUserDomain } from '../actions'
 import DashboardLayoutWrapper from '../components/dashboard-layout-wrapper'
-import BookmarksClient from './bookmarks-client'
+import AnalyticsClient from './performance-client'
 
-export default async function BookmarksPage() {
+export default async function AnalyticsPage() {
   const supabase = await createClient()
   const { data: { user }, error } = await supabase.auth.getUser()
   if (error || !user) redirect('/auth/login')
@@ -17,7 +17,7 @@ export default async function BookmarksPage() {
     .single()
     
   const userDomain = await getUserDomain()
-  const bookmarks = await getBookmarkedQuestions()
+  const data = await getAnalyticsData()
 
   return (
     <DashboardLayoutWrapper 
@@ -26,7 +26,7 @@ export default async function BookmarksPage() {
       domain={userDomain?.domain}
       role={profile?.role}
     >
-      <BookmarksClient initialBookmarks={bookmarks} />
+      <AnalyticsClient data={data!} />
     </DashboardLayoutWrapper>
   )
 }

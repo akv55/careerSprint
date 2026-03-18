@@ -1,14 +1,16 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { signOutUser } from '../actions'
+import TopAvatar from './top-avatar'
 
 interface TopbarProps {
   fullName: string | null
   email: string
   domain: string | null
+  role?: string | null
 }
 
-export default function DashboardTopbar({ fullName, email, domain }: TopbarProps) {
+export default function DashboardTopbar({ fullName, email, domain, role }: TopbarProps) {
   const displayName = fullName || email
   const initials = displayName
     .split(' ')
@@ -38,13 +40,18 @@ export default function DashboardTopbar({ fullName, email, domain }: TopbarProps
               </span>
             )}
 
+            {role === 'admin' && (
+              <span className="inline-flex items-center gap-1.5 text-xs font-black text-red-600 bg-red-50 border border-red-100 rounded-full px-3 py-1 animate-pulse">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-600 inline-block" />
+                ADMIN
+              </span>
+            )}
+
             <div className="w-px h-6 bg-gray-200" />
 
             {/* Avatar + name */}
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
-                <span className="text-xs font-bold text-primary">{initials}</span>
-              </div>
+              <TopAvatar initials={initials} />
               <span className="hidden sm:block text-sm font-semibold text-gray-800 max-w-[140px] truncate">
                 {displayName}
               </span>

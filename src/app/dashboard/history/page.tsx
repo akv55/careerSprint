@@ -12,7 +12,7 @@ export default async function HistoryPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name')
+    .select('full_name, role')
     .eq('id', user.id)
     .single()
     
@@ -24,6 +24,7 @@ export default async function HistoryPage() {
       profileFullName={profile?.full_name} 
       email={user.email!} 
       domain={userDomain?.domain}
+      role={profile?.role}
     >
       <HistoryList sessions={history} />
     </DashboardLayoutWrapper>

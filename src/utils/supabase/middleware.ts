@@ -57,5 +57,31 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  // RBAC for /admin routes
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    if (!user) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/auth/login'
+      return NextResponse.redirect(url)
+    }
+
+    // Fetch profile to check role
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    // If we have an error or no profile, we should be careful. 
+    // However, if the user IS authenticated and our database is just slow, we don't want to lock them out immediately.
+    // But for security, we only allow access if role is explicitly 'admin'.
+    if (profile?.role !== 'admin') {
+      // LOG: console.log('Unauthorized admin access attempt:', user.email, profile?.role)
+      const url = request.nextUrl.clone()
+      url.pathname = '/dashboard'
+      return NextResponse.redirect(url)
+    }
+  }
+
   return supabaseResponse
 }

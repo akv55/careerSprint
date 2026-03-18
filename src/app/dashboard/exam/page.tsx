@@ -10,7 +10,7 @@ export default async function ExamPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name')
+    .select('full_name, role')
     .eq('id', user.id)
     .single()
 
@@ -24,6 +24,7 @@ export default async function ExamPage() {
       skills={userDomain.skills}
       profileFullName={profile?.full_name}
       email={user.email!}
+      role={profile?.role}
     />
   )
 }

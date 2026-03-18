@@ -14,7 +14,7 @@ export default async function DashboardPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name, avatar_url')
+    .select('full_name, avatar_url, role')
     .eq('id', user.id)
     .single()
 
@@ -40,6 +40,7 @@ export default async function DashboardPage() {
       profileFullName={profile?.full_name} 
       email={user.email!} 
       domain={userDomain?.domain}
+      role={profile?.role}
     >
       {!userDomain ? (
         <div className="max-w-2xl mx-auto">

@@ -10,12 +10,12 @@ export default async function SettingsPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name')
+    .select('full_name, role')
     .eq('id', user.id)
     .single()
 
   return (
-    <DashboardLayoutWrapper profileFullName={profile?.full_name} email={user.email!}>
+    <DashboardLayoutWrapper profileFullName={profile?.full_name} email={user.email!} role={profile?.role}>
       <div className="max-w-3xl mx-auto space-y-8">
         <div>
           <h1 className="text-2xl font-extrabold text-gray-900 leading-tight">Settings</h1>

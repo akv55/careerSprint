@@ -14,9 +14,10 @@ interface ExamClientProps {
   skills: string[]
   profileFullName?: string | null
   email: string
+  role?: string | null
 }
 
-export default function ExamClient({ domain, secondaryDomain, skills, profileFullName, email }: ExamClientProps) {
+export default function ExamClient({ domain, secondaryDomain, skills, profileFullName, email, role }: ExamClientProps) {
   const [phase, setPhase] = useState<'select' | 'loading' | 'running'>('select')
   const [mode, setMode] = useState<ExamMode>('both')
   const [questions, setQuestions] = useState<ExamQuestion[]>([])
@@ -54,7 +55,7 @@ export default function ExamClient({ domain, secondaryDomain, skills, profileFul
   }
 
   return (
-    <DashboardLayoutWrapper profileFullName={profileFullName} email={email} domain={domain}>
+    <DashboardLayoutWrapper profileFullName={profileFullName} email={email} domain={domain} role={role}>
       {phase === 'loading' ? (
         <div className="flex items-center justify-center py-24">
           <div className="text-center">

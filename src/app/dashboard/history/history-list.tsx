@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, History, ChevronRight, Clock, Target, Filter, FileText } from 'lucide-react'
+import CustomSelect from '@/components/ui/custom-select'
 
 interface Session {
   id: string; domain: string; secondary_domain?: string | null; mode: string
@@ -69,11 +70,15 @@ export default function HistoryList({ sessions }: Props) {
         <div className="flex items-center gap-3 mb-4 flex-wrap">
           <div className="flex items-center gap-2">
             <Filter className="w-4 h-4 text-gray-400" />
-            <select value={filterDomain} onChange={e => setFilterDomain(e.target.value)}
-              className="text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none">
-              <option value="all">All Domains</option>
-              {domains.map(d => <option key={d} value={d}>{d}</option>)}
-            </select>
+            <CustomSelect
+              options={[
+                { label: 'All Domains', value: 'all' },
+                ...domains.map(d => ({ label: d, value: d }))
+              ]}
+              value={filterDomain}
+              onChange={setFilterDomain}
+              className="w-48"
+            />
           </div>
           <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-0.5">
             {([['date', 'Latest'], ['score', 'Score'], ['time', 'Time']] as [SortKey, string][]).map(([key, label]) => (

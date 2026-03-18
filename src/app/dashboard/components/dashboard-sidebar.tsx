@@ -2,25 +2,37 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, FileText, History, BarChart2, User, Settings, Bookmark } from 'lucide-react'
+import { LayoutDashboard, FileText, History, BarChart2, User, Settings, Bookmark, Trophy, ShieldCheck, Zap } from 'lucide-react'
 
 const navItems = [
   { name: 'Dashboard',      icon: LayoutDashboard, href: '/dashboard' },
   { name: 'Practice Exams', icon: FileText,         href: '/dashboard/exam' },
+  { name: 'Leaderboard',    icon: Trophy,           href: '/dashboard/leaderboard' },
   { name: 'Test History',   icon: History,          href: '/dashboard/history' },
-  { name: 'Analytics',      icon: BarChart2,        href: '/dashboard/analytics' },
+  { name: 'Performance',      icon: BarChart2,        href: '/dashboard/performance' },
   { name: 'Saved Questions', icon: Bookmark,         href: '/dashboard/bookmarks' },
   { name: 'Profile',        icon: User,             href: '/dashboard/profile' },
   { name: 'Settings',       icon: Settings,         href: '/dashboard/settings' },
 ]
 
-export default function DashboardSidebar() {
+export default function DashboardSidebar({ role }: { role?: string | null }) {
   const pathname = usePathname()
+
+  const allNavItems = [...navItems]
+  if (role === 'admin') {
+    allNavItems.splice(1, 0, { name: 'Admin Panel', icon: ShieldCheck, href: '/admin' })
+  }
 
   return (
     <aside className="w-64 flex-shrink-0 border-r border-gray-200 bg-white hidden md:flex flex-col overflow-y-auto">
+      <div className="p-6 border-b border-gray-50 flex items-center gap-2">
+        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white shadow-lg shadow-primary/20">
+          <Zap size={18} fill="currentColor" />
+        </div>
+        <span className="text-xl font-black tracking-tight text-gray-900">CareerSprint</span>
+      </div>
       <div className="py-6 px-4 space-y-1 flex-1">
-        {navItems.map((item) => {
+        {allNavItems.map((item) => {
           const Icon = item.icon
           // Handle nested routes (e.g. /dashboard/exam/result should match /dashboard/exam)
           const active = pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/dashboard')
