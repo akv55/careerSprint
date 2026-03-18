@@ -3,6 +3,8 @@ import { getBookmarkedQuestions } from '../bookmark-actions'
 import BookmarksClient from './bookmarks-client'
 
 function LoadingFallback() {
+
+  
   return (
     <div className="flex h-full items-center justify-center p-8">
       <div className="text-muted-foreground animate-pulse">Loading bookmarks...</div>
