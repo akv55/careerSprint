@@ -2,10 +2,16 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { getUserDomain } from './actions'
 import DashboardLayoutWrapper from './components/dashboard-layout-wrapper'
+import { UserProvider } from './components/user-context'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
-  const { data: { user }, error } = await supabase.auth.getUser()
+  
+  // Parallelize the user auth fetch and the domain fetch since they are independent
+  const [{ data: { user }, error }, userDomain] = await Promise.all([
+    supabase.auth.getUser(),
+    getUserDomain()
+  ])
 
   if (error || !user) redirect('/auth/login')
 
@@ -15,16 +21,15 @@ export default async function DashboardLayout({ children }: { children: React.Re
     .eq('id', user.id)
     .single()
 
-  const userDomain = await getUserDomain()
-
   return (
-    <DashboardLayoutWrapper 
-      profileFullName={profile?.full_name} 
-      email={user.email!} 
-      domain={userDomain?.domain}
-      role={profile?.role}
+    <UserProvider 
+      user={{ id: user.id, email: user.email! }} 
+      profile={{ full_name: profile?.full_name, role: profile?.role }} 
+      userDomain={userDomain ?? null}
     >
-      {children}
-    </DashboardLayoutWrapper>
+      <DashboardLayoutWrapper>
+        {children}
+      </DashboardLayoutWrapper>
+    </UserProvider>
   )
 }

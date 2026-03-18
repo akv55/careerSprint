@@ -1,33 +1,19 @@
-import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
-import DashboardLayoutWrapper from '../components/dashboard-layout-wrapper'
+import { Suspense } from 'react'
 import { Bell, Lock, Key, Moon, Globe } from 'lucide-react'
 
-export default async function SettingsPage() {
-  const supabase = await createClient()
-  const { data: { user }, error } = await supabase.auth.getUser()
-  if (error || !user) redirect('/auth/login')
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name, role')
-    .eq('id', user.id)
-    .single()
-
+function SettingsContent() {
   return (
-  
-    <DashboardLayoutWrapper profileFullName={profile?.full_name} email={user.email!} role={profile?.role}>
-      <div className="max-w-3xl mx-auto space-y-8">
-        <div>
-          <h1 className="text-2xl font-extrabold text-gray-900 leading-tight">Settings</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage your preferences and application settings.</p>
-        </div>
+    <div className="max-w-3xl mx-auto space-y-8">
+      <div>
+        <h1 className="text-2xl font-extrabold text-gray-900 leading-tight">Settings</h1>
+        <p className="text-sm text-gray-500 mt-1">Manage your preferences and application settings.</p>
+      </div>
 
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="p-6 md:p-8">
-            <h2 className="text-lg font-bold text-gray-900 mb-6">Account Settings</h2>
-            
-            <div className="space-y-4">
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="p-6 md:p-8">
+          <h2 className="text-lg font-bold text-gray-900 mb-6">Account Settings</h2>
+          
+          <div className="space-y-4">
               <div className="flex items-center justify-between p-4 border border-gray-100 hover:border-gray-200 bg-gray-50 hover:bg-gray-100/50 rounded-xl transition-colors cursor-not-allowed opacity-70">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-gray-200">
@@ -80,7 +66,22 @@ export default async function SettingsPage() {
             </div>
           </div>
         </div>
-      </div>
-    </DashboardLayoutWrapper>
+    </div>
+  )
+}
+
+function LoadingFallback() {
+  return (
+    <div className="flex h-full items-center justify-center p-8">
+      <div className="text-muted-foreground animate-pulse">Loading settings...</div>
+    </div>
+  )
+}
+
+export default function SettingsPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <SettingsContent />
+    </Suspense>
   )
 }

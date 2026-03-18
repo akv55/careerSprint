@@ -1,30 +1,18 @@
-import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
-import { getUserDomain } from '../actions'
+import { Suspense } from 'react'
 import ExamClient from './exam-client'
 
-export default async function ExamPage() {
-  const supabase = await createClient()
-  const { data: { user }, error } = await supabase.auth.getUser()
-  if (error || !user) redirect('/auth/login')
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name, role')
-    .eq('id', user.id)
-    .single()
-
-  const userDomain = await getUserDomain()
-  if (!userDomain) redirect('/dashboard')
-
+function LoadingFallback() {
   return (
-    <ExamClient
-      domain={userDomain.domain}
-      secondaryDomain={userDomain.secondary_domain}
-      skills={userDomain.skills}
-      profileFullName={profile?.full_name}
-      email={user.email!}
-      role={profile?.role}
-    />
+    <div className="flex h-full items-center justify-center p-8">
+      <div className="text-muted-foreground animate-pulse">Loading exam environment...</div>
+    </div>
+  )
+}
+
+export default function ExamPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <ExamClient />
+    </Suspense>
   )
 }

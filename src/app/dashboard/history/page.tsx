@@ -1,26 +1,24 @@
-import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
+import { Suspense } from 'react'
 import { getTestHistory } from '../exam-actions'
-import { getUserDomain } from '../actions'
 import HistoryList from './history-list'
-import DashboardLayoutWrapper from '../components/dashboard-layout-wrapper'
 
-export default async function HistoryPage() {
-  // const supabase = await createClient()
-  // const { data: { user }, error } = await supabase.auth.getUser()
-  // if (error || !user) redirect('/auth/login')
-
-  // const { data: profile } = await supabase
-  //   .from('profiles')
-  //   .select('full_name, role')
-  //   .eq('id', user.id)
-  //   .single()
-    
-  // const userDomain = await getUserDomain()
-  const history = await getTestHistory()
-
+function LoadingFallback() {
   return (
-    <>
-      <HistoryList sessions={history} />
-    </>
-)}
+    <div className="flex h-full items-center justify-center p-8">
+      <div className="text-muted-foreground animate-pulse">Loading test history...</div>
+    </div>
+  )
+}
+
+async function HistoryContent() {
+  const history = await getTestHistory()
+  return <HistoryList sessions={history} />
+}
+
+export default function HistoryPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <HistoryContent />
+    </Suspense>
+  )
+}

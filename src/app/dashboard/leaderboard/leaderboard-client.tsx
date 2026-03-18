@@ -59,8 +59,8 @@ export default function LeaderboardClient() {
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-[2rem] bg-slate-900 p-8 md:p-10 text-white shadow-2xl shadow-blue-900/20">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-blue-600/20 to-transparent pointer-events-none" />
+      <div className="relative overflow-hidden rounded-4xl bg-slate-900 p-8 md:p-10 text-white shadow-2xl shadow-blue-900/20">
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-linear-to-l from-blue-600/20 to-transparent pointer-events-none" />
         <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px]" />
         
         <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
@@ -69,7 +69,7 @@ export default function LeaderboardClient() {
               <Sparkles size={12} /> Season 1: Genesis
             </div>
             <h1 className="text-4xl md:text-5xl font-black tracking-tight">
-              Hall of <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">Fame</span>
+              Hall of <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-indigo-300">Fame</span>
             </h1>
             <p className="text-slate-400 max-w-sm text-sm leading-relaxed">
               The definitive ranking of CareerSprint's most dedicated tech talents.
@@ -171,7 +171,7 @@ export default function LeaderboardClient() {
       {/* Main Ranking List */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-12">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl overflow-hidden">
+          <div className="bg-white rounded-4xl border border-slate-100 shadow-xl overflow-hidden">
             <div className="px-6 py-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
               <h2 className="text-sm font-black text-slate-900 flex items-center gap-2">
                 <TrendingUp size={16} className="text-blue-600" /> Rankings
