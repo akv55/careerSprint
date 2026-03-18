@@ -178,9 +178,9 @@ export default function UserDetail({ params }: { params: Promise<{ userId: strin
                           />
                        </div>
                     </div>
-                    <button className="p-2 text-slate-400 hover:text-blue-600 transition-colors">
+                    <Link href={`/admin/sessions/${exam.id}`} className="p-2 text-slate-400 hover:text-blue-600 transition-colors">
                       <ExternalLink size={18} />
-                    </button>
+                    </Link>
                   </div>
                 </div>
               ))}
