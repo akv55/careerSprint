@@ -18,16 +18,10 @@ export default async function ProfilePage() {
   const userDomain = await getUserDomain()
 
   return (
-    <DashboardLayoutWrapper 
-      profileFullName={profile?.full_name} 
-      email={user.email!} 
-      domain={userDomain?.domain}
-      role={profile?.role}
-    >
-      <ProfileClient 
-        user={{ email: user.email!, fullName: profile?.full_name || '' }}
+    <>
+      <ProfileClient
+        user={{ email: user.email!, fullName: profile?.full_name || '' }}       
         userDomain={userDomain}
       />
-    </DashboardLayoutWrapper>
-  )
-}
+    </>
+)}

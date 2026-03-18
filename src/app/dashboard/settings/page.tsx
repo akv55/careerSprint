@@ -15,6 +15,7 @@ export default async function SettingsPage() {
     .single()
 
   return (
+  
     <DashboardLayoutWrapper profileFullName={profile?.full_name} email={user.email!} role={profile?.role}>
       <div className="max-w-3xl mx-auto space-y-8">
         <div>

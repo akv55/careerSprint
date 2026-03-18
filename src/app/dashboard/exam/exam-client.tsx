@@ -55,7 +55,7 @@ export default function ExamClient({ domain, secondaryDomain, skills, profileFul
   }
 
   return (
-    <DashboardLayoutWrapper profileFullName={profileFullName} email={email} domain={domain} role={role}>
+    <>
       {phase === 'loading' ? (
         <div className="flex items-center justify-center py-24">
           <div className="text-center">
@@ -72,6 +72,6 @@ export default function ExamClient({ domain, secondaryDomain, skills, profileFul
           error={error}
         />
       )}
-    </DashboardLayoutWrapper>
+    </>
   )
 }

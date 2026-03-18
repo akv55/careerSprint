@@ -6,27 +6,21 @@ import HistoryList from './history-list'
 import DashboardLayoutWrapper from '../components/dashboard-layout-wrapper'
 
 export default async function HistoryPage() {
-  const supabase = await createClient()
-  const { data: { user }, error } = await supabase.auth.getUser()
-  if (error || !user) redirect('/auth/login')
+  // const supabase = await createClient()
+  // const { data: { user }, error } = await supabase.auth.getUser()
+  // if (error || !user) redirect('/auth/login')
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name, role')
-    .eq('id', user.id)
-    .single()
+  // const { data: profile } = await supabase
+  //   .from('profiles')
+  //   .select('full_name, role')
+  //   .eq('id', user.id)
+  //   .single()
     
-  const userDomain = await getUserDomain()
+  // const userDomain = await getUserDomain()
   const history = await getTestHistory()
 
   return (
-    <DashboardLayoutWrapper 
-      profileFullName={profile?.full_name} 
-      email={user.email!} 
-      domain={userDomain?.domain}
-      role={profile?.role}
-    >
+    <>
       <HistoryList sessions={history} />
-    </DashboardLayoutWrapper>
-  )
-}
+    </>
+)}

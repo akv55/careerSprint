@@ -17,3 +17,7 @@ export const config = {
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
+
+// export const config = {
+//   matcher: ['/dashboard/:path*', '/api/protected/:path*'],
+// }

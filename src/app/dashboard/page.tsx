@@ -36,12 +36,7 @@ export default async function DashboardPage() {
   }
 
   return (
-    <DashboardLayoutWrapper 
-      profileFullName={profile?.full_name} 
-      email={user.email!} 
-      domain={userDomain?.domain}
-      role={profile?.role}
-    >
+    <>
       {!userDomain ? (
         <div className="max-w-2xl mx-auto">
           <SetupWizard />
@@ -58,7 +53,6 @@ export default async function DashboardPage() {
           />
         </div>
       )}
-    </DashboardLayoutWrapper>
-  )
-}
+    </>
+)}
 
