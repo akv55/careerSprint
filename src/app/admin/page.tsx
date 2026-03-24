@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { 
   Users, 
   CheckCircle2, 
@@ -175,7 +176,7 @@ export default function AdminDashboard() {
               const displayName = profile?.full_name || profile?.email || 'Anonymous'
               const initials = displayName.split(' ').map((w: string) => w[0]).slice(0,2).join('').toUpperCase()
               return (
-                <div key={activity.id} className="p-4 hover:bg-slate-50 transition-colors flex items-center gap-4">
+                <Link href={`/admin/sessions/${activity.id}`} key={activity.id} className="p-4 hover:bg-slate-50 transition-colors flex items-center gap-4 block cursor-pointer">
                   <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
                     {profile?.avatar_url ? (
                       <img src={profile.avatar_url} alt={displayName} className="w-full h-full object-cover" />
@@ -199,7 +200,7 @@ export default function AdminDashboard() {
                       {new Date(activity.completed_at).toLocaleDateString()}
                     </p>
                   </div>
-                </div>
+                </Link>
               )
             })}
             {(!stats?.recentActivities || stats.recentActivities.length === 0) && (
