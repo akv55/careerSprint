@@ -41,12 +41,6 @@ export default function DashboardSidebar() {
 
   return (
     <aside className="w-64 shrink-0 border-r border-gray-200 bg-white hidden md:flex flex-col overflow-y-auto">
-      <div className="p-6 border-b border-gray-50 flex items-center gap-2">
-        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white shadow-lg shadow-primary/20">
-          <Zap size={18} fill="currentColor" />
-        </div>
-        <span className="text-xl font-black tracking-tight text-gray-900">CareerSprint</span>
-      </div>
       <div className="py-6 px-4 space-y-1 flex-1">
         {allNavItems.map((item) => {
           const Icon = item.icon
