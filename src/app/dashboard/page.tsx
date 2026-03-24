@@ -1,14 +1,25 @@
+import { Suspense } from 'react'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { getUserDomain } from './actions'
 import { getTestHistory } from './exam-actions'
 import SetupWizard from './setup-wizard'
-import DashboardLayoutWrapper from './components/dashboard-layout-wrapper'
 import DashboardHome from './components/dashboard-home'
 
-export default async function DashboardPage() {
+function LoadingFallback() {
+  return (
+    <div className="flex h-full items-center justify-center p-8">
+      <div className="text-muted-foreground animate-pulse">Loading dashboard overview...</div>
+    </div>
+  )
+}
+
+async function DashboardContent() {
   const supabase = await createClient()
-  const { data: { user }, error } = await supabase.auth.getUser()
+  const [{ data: { user }, error }, userDomain] = await Promise.all([
+    supabase.auth.getUser(),
+    getUserDomain()
+  ])
 
   if (error || !user) redirect('/auth/login')
 
@@ -18,7 +29,6 @@ export default async function DashboardPage() {
     .eq('id', user.id)
     .single()
 
-  const userDomain = await getUserDomain()
   const displayName = profile?.full_name || user.email || 'User'
 
   // Compute stats for the dashboard
@@ -36,12 +46,7 @@ export default async function DashboardPage() {
   }
 
   return (
-    <DashboardLayoutWrapper 
-      profileFullName={profile?.full_name} 
-      email={user.email!} 
-      domain={userDomain?.domain}
-      role={profile?.role}
-    >
+    <>
       {!userDomain ? (
         <div className="max-w-2xl mx-auto">
           <SetupWizard />
@@ -49,16 +54,20 @@ export default async function DashboardPage() {
       ) : (
         <div className="animate-in fade-in duration-500">
           <DashboardHome
-            domain={userDomain.domain}
-            secondaryDomain={userDomain.secondary_domain}
-            skills={userDomain.skills}
-            userName={displayName}
             stats={stats}
             recentSessions={recentSessions}
           />
         </div>
       )}
-    </DashboardLayoutWrapper>
+    </>
+  )
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <DashboardContent />
+    </Suspense>
   )
 }
 

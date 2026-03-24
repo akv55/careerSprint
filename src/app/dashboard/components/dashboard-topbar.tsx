@@ -1,17 +1,19 @@
+'use client';
+
 import Link from 'next/link'
 import Image from 'next/image'
 import { signOutUser } from '../actions'
 import TopAvatar from './top-avatar'
+import { useUser } from './user-context'
 
-interface TopbarProps {
-  fullName: string | null
-  email: string
-  domain: string | null
-  role?: string | null
-}
+export default function DashboardTopbar() {
+  const { user, profile, userDomain } = useUser()
+  
+  if (!user) return null
+  
+  const domain = userDomain?.domain
 
-export default function DashboardTopbar({ fullName, email, domain, role }: TopbarProps) {
-  const displayName = fullName || email
+  const displayName = profile?.full_name || user.email
   const initials = displayName
     .split(' ')
     .map((w: string) => w[0])
@@ -20,12 +22,12 @@ export default function DashboardTopbar({ fullName, email, domain, role }: Topba
     .toUpperCase()
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-40 flex-shrink-0">
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shrink-0">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
 
           {/* Logo */}
-          <Link href="/dashboard" className="flex items-center flex-shrink-0">
+          <Link href="/dashboard" className="flex items-center shrink-0">
             <Image src="/logo.png" alt="CareerSprint" width={180} height={36} priority />
           </Link>
 
@@ -40,7 +42,7 @@ export default function DashboardTopbar({ fullName, email, domain, role }: Topba
               </span>
             )}
 
-            {role === 'admin' && (
+            {profile?.role === 'admin' && (
               <span className="inline-flex items-center gap-1.5 text-xs font-black text-red-600 bg-red-50 border border-red-100 rounded-full px-3 py-1 animate-pulse">
                 <span className="w-1.5 h-1.5 rounded-full bg-red-600 inline-block" />
                 ADMIN

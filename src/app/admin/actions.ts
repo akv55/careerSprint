@@ -18,31 +18,46 @@ export async function getAdminStats() {
 
   if (profile?.role !== 'admin') throw new Error('Unauthorized')
 
-  // 1. Total Registered Users
-  const { count: userCount } = await supabase
-    .from('profiles')
-    .select('*', { count: 'exact', head: true })
-
-  // 2. Total Exams Completed
-  const { count: examCount } = await supabase
-    .from('test_sessions')
-    .select('*', { count: 'exact', head: true })
-
   // 3. User Growth (Last 30 days)
   const thirtyDaysAgo = new Date()
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-  
-  const { count: recentUsers } = await supabase
-    .from('profiles')
-    .select('*', { count: 'exact', head: true })
-    .gte('created_at', thirtyDaysAgo.toISOString())
 
-  // 4. Recent Activities (Fetch sessions then join locally since foreign key is to auth.users not profiles)
-  const { data: rawActivities } = await supabase
-    .from('test_sessions')
-    .select('*')
-    .order('completed_at', { ascending: false })
-    .limit(10)
+  const now = new Date()
+  const sixMonthsAgo = new Date()
+  sixMonthsAgo.setMonth(now.getMonth() - 5)
+  sixMonthsAgo.setDate(1) // start of 6 months ago
+  sixMonthsAgo.setHours(0, 0, 0, 0)
+
+  const [
+    { count: userCount },
+    { count: examCount },
+    { count: recentUsers },
+    { data: rawActivities },
+    { data: allSessions },
+    { data: allProfiles },
+    { data: allExamSessions }
+  ] = await Promise.all([
+    // 1. Total Registered Users
+    supabase.from('profiles').select('*', { count: 'estimated', head: true }),
+    
+    // 2. Total Exams Completed
+    supabase.from('test_sessions').select('*', { count: 'estimated', head: true }),
+    
+    // 3. User Growth (Last 30 days)
+    supabase.from('profiles').select('*', { count: 'estimated', head: true }).gte('created_at', thirtyDaysAgo.toISOString()),
+    
+    // 4. Recent Activities (Fetch sessions)
+    supabase.from('test_sessions').select('*').order('completed_at', { ascending: false }).limit(10),
+    
+    // 5. Success Rate (Limited to recent for performance)
+    supabase.from('test_sessions').select('score, total').order('completed_at', { ascending: false }).limit(5000),
+    
+    // 6. Chart Data Generation - limit profiles to last 6 months
+    supabase.from('profiles').select('created_at').gte('created_at', sixMonthsAgo.toISOString()),
+    
+    // 6. Chart Data Generation - limit sessions to last 6 months
+    supabase.from('test_sessions').select('completed_at').gte('completed_at', sixMonthsAgo.toISOString())
+  ])
 
   let recentActivities: any[] = []
   if (rawActivities && rawActivities.length > 0) {
@@ -61,32 +76,16 @@ export async function getAdminStats() {
     })
   }
 
-  // 5. Success Rate
-  // Simplified logic: Average score percentage across all sessions
-  const { data: allSessions } = await supabase
-    .from('test_sessions')
-    .select('score, total')
-  
   let avgSuccessRate = 0
   if (allSessions && allSessions.length > 0) {
     const totalPct = allSessions.reduce((acc, curr) => acc + (curr.score / curr.total), 0)
     avgSuccessRate = Math.round((totalPct / allSessions.length) * 100)
   }
 
-  // 6. Chart Data Generation (Last 6 Months)
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-  
-  const { data: allProfiles } = await supabase.from('profiles').select('created_at')
-  const { data: allExamSessions } = await supabase.from('test_sessions').select('completed_at')
 
   const chartData = []
-  const now = new Date()
   let runningUserTotal = 0;
-
-  const sixMonthsAgo = new Date();
-  sixMonthsAgo.setMonth(now.getMonth() - 5);
-  sixMonthsAgo.setDate(1); // start of 6 months ago
-  sixMonthsAgo.setHours(0, 0, 0, 0);
 
   if (allProfiles) {
     runningUserTotal = allProfiles.filter(p => new Date(p.created_at) < sixMonthsAgo).length;
@@ -137,12 +136,13 @@ export async function getAdminUsers(filters?: { search?: string, page?: number, 
   
   let query = supabase
     .from('profiles')
-    .select('*', { count: 'exact' })
+    .select('*', { count: 'estimated' })
     .order('created_at', { ascending: false })
     .range(from, to)
 
   if (filters?.search) {
-    query = query.or(`full_name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`)
+    // Uses prefix search to allow indexes to be used instead of full table scans
+    query = query.or(`full_name.ilike.${filters.search}%,email.ilike.${filters.search}%`)
   }
 
   const { data, error, count } = await query
@@ -156,37 +156,20 @@ export async function getAdminUsers(filters?: { search?: string, page?: number, 
 export async function getAdminUserDetail(userId: string) {
   const supabase = await createClient()
 
-  // 1. Profile data
-  const { data: profile, error: pError } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', userId)
-    .single()
+  const [
+    { data: profile, error: pError },
+    { data: exams, error: eError },
+    { data: domain },
+    { data: gamification }
+  ] = await Promise.all([
+    supabase.from('profiles').select('*').eq('id', userId).single(),
+    supabase.from('test_sessions').select('*').eq('user_id', userId).order('completed_at', { ascending: false }),
+    supabase.from('user_domains').select('*').eq('user_id', userId).single(),
+    supabase.from('user_gamification').select('*').eq('user_id', userId).single()
+  ])
 
   if (pError) throw pError
-
-  // 2. Exam History
-  const { data: exams, error: eError } = await supabase
-    .from('test_sessions')
-    .select('*')
-    .eq('user_id', userId)
-    .order('completed_at', { ascending: false })
-
   if (eError) throw eError
-
-  // 3. Domains/Skills
-  const { data: domain } = await supabase
-    .from('user_domains')
-    .select('*')
-    .eq('user_id', userId)
-    .single()
-
-  // 4. Gamification data
-  const { data: gamification } = await supabase
-    .from('user_gamification')
-    .select('*')
-    .eq('user_id', userId)
-    .single()
 
   return {
     profile,
@@ -205,7 +188,7 @@ export async function getAdminQuestions(filters?: { domain?: string, skill?: str
 
   let query = supabase
     .from('questions')
-    .select('*', { count: 'exact' })
+    .select('*', { count: 'estimated' })
     .order('created_at', { ascending: false })
     .range(from, to)
 
@@ -315,7 +298,7 @@ export async function getAdminEnrollments(filters?: { search?: string, status?: 
     .select(`
       *,
       profiles:user_id ( full_name, email )
-    `, { count: 'exact' })
+    `, { count: 'estimated' })
     .order('purchased_at', { ascending: false })
     .range(from, to)
 
@@ -324,7 +307,8 @@ export async function getAdminEnrollments(filters?: { search?: string, status?: 
   }
 
   if (filters?.search) {
-    query = query.or(`course_title.ilike.%${filters.search}%,mobile_no.ilike.%${filters.search}%`)
+    // Prefix search for index compatibility
+    query = query.or(`course_title.ilike.${filters.search}%,mobile_no.ilike.${filters.search}%`)
   }
 
   const { data, error, count } = await query
