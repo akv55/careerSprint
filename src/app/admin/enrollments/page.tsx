@@ -3,11 +3,10 @@ import EnrollmentsDirectoryClient from './enrollments-client'
 
 export const dynamic = 'force-dynamic'
 
-export default async function EnrollmentsDirectory({
-  searchParams
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined }
+export default async function EnrollmentsDirectory(props: {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
+  const searchParams = await props.searchParams
   const search = typeof searchParams?.search === 'string' ? searchParams.search : ''
   const statusFilter = typeof searchParams?.status === 'string' ? searchParams.status : 'all'
   const page = typeof searchParams?.page === 'string' ? parseInt(searchParams.page, 10) : 1

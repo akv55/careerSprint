@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useTransition, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { 
   BarChart3, 
@@ -35,7 +35,6 @@ export default function AdminLayout({
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathname = usePathname()
-  const [isPending, startTransition] = useTransition()
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null)
   const router = useRouter()
 
@@ -52,9 +51,7 @@ export default function AdminLayout({
     if (navigatingTo === href) return 
 
     setNavigatingTo(href)
-    startTransition(() => {
-      router.push(href)
-    })
+    router.push(href)
   }
 
   return (

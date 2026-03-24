@@ -21,6 +21,12 @@ export async function getAdminStats() {
   const thirtyDaysAgo = new Date()
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
+  const now = new Date()
+  const sixMonthsAgo = new Date()
+  sixMonthsAgo.setMonth(now.getMonth() - 5)
+  sixMonthsAgo.setDate(1) // start of 6 months ago
+  sixMonthsAgo.setHours(0, 0, 0, 0)
+
   const [
     { count: userCount },
     { count: examCount },
@@ -31,25 +37,25 @@ export async function getAdminStats() {
     { data: allExamSessions }
   ] = await Promise.all([
     // 1. Total Registered Users
-    supabase.from('profiles').select('*', { count: 'exact', head: true }),
+    supabase.from('profiles').select('*', { count: 'estimated', head: true }),
     
     // 2. Total Exams Completed
-    supabase.from('test_sessions').select('*', { count: 'exact', head: true }),
+    supabase.from('test_sessions').select('*', { count: 'estimated', head: true }),
     
     // 3. User Growth (Last 30 days)
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', thirtyDaysAgo.toISOString()),
+    supabase.from('profiles').select('*', { count: 'estimated', head: true }).gte('created_at', thirtyDaysAgo.toISOString()),
     
     // 4. Recent Activities (Fetch sessions)
     supabase.from('test_sessions').select('*').order('completed_at', { ascending: false }).limit(10),
     
-    // 5. Success Rate
-    supabase.from('test_sessions').select('score, total'),
+    // 5. Success Rate (Limited to recent for performance)
+    supabase.from('test_sessions').select('score, total').order('completed_at', { ascending: false }).limit(5000),
     
-    // 6. Chart Data Generation - all profiles
-    supabase.from('profiles').select('created_at'),
+    // 6. Chart Data Generation - limit profiles to last 6 months
+    supabase.from('profiles').select('created_at').gte('created_at', sixMonthsAgo.toISOString()),
     
-    // 6. Chart Data Generation - all sessions
-    supabase.from('test_sessions').select('completed_at')
+    // 6. Chart Data Generation - limit sessions to last 6 months
+    supabase.from('test_sessions').select('completed_at').gte('completed_at', sixMonthsAgo.toISOString())
   ])
 
   let recentActivities: any[] = []
@@ -78,13 +84,7 @@ export async function getAdminStats() {
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
   const chartData = []
-  const now = new Date()
   let runningUserTotal = 0;
-
-  const sixMonthsAgo = new Date();
-  sixMonthsAgo.setMonth(now.getMonth() - 5);
-  sixMonthsAgo.setDate(1); // start of 6 months ago
-  sixMonthsAgo.setHours(0, 0, 0, 0);
 
   if (allProfiles) {
     runningUserTotal = allProfiles.filter(p => new Date(p.created_at) < sixMonthsAgo).length;
@@ -135,12 +135,13 @@ export async function getAdminUsers(filters?: { search?: string, page?: number, 
   
   let query = supabase
     .from('profiles')
-    .select('*', { count: 'exact' })
+    .select('*', { count: 'estimated' })
     .order('created_at', { ascending: false })
     .range(from, to)
 
   if (filters?.search) {
-    query = query.or(`full_name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`)
+    // Uses prefix search to allow indexes to be used instead of full table scans
+    query = query.or(`full_name.ilike.${filters.search}%,email.ilike.${filters.search}%`)
   }
 
   const { data, error, count } = await query
@@ -186,7 +187,7 @@ export async function getAdminQuestions(filters?: { domain?: string, skill?: str
 
   let query = supabase
     .from('questions')
-    .select('*', { count: 'exact' })
+    .select('*', { count: 'estimated' })
     .order('created_at', { ascending: false })
     .range(from, to)
 
@@ -270,7 +271,7 @@ export async function getAdminEnrollments(filters?: { search?: string, status?: 
     .select(`
       *,
       profiles:user_id ( full_name, email )
-    `, { count: 'exact' })
+    `, { count: 'estimated' })
     .order('purchased_at', { ascending: false })
     .range(from, to)
 
@@ -279,7 +280,8 @@ export async function getAdminEnrollments(filters?: { search?: string, status?: 
   }
 
   if (filters?.search) {
-    query = query.or(`course_title.ilike.%${filters.search}%,mobile_no.ilike.%${filters.search}%`)
+    // Prefix search for index compatibility
+    query = query.or(`course_title.ilike.${filters.search}%,mobile_no.ilike.${filters.search}%`)
   }
 
   const { data, error, count } = await query
