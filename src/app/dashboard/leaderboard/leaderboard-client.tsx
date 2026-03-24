@@ -1,56 +1,26 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { 
   Trophy, 
   Flame, 
-  User as UserIcon,
   Crown,
-  Star,
   Zap,
   Award,
   TrendingUp,
   Sparkles,
-  Medal
 } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { getLeaderboard, getMyGamificationStatus } from './actions'
 
-export default function LeaderboardClient() {
-  const [leaderboard, setLeaderboard] = useState<any[]>([])
-  const [myStatus, setMyStatus] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const [lb, status] = await Promise.all([
-          getLeaderboard(),
-          getMyGamificationStatus()
-        ])
-        setLeaderboard(lb)
-        setMyStatus(status)
-      } catch (error) {
-        console.error('Failed to load leaderboard:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    loadData()
-  }, [])
-
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
-        <div className="relative w-16 h-16">
-          <div className="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
-          <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
-          <Trophy className="absolute inset-0 m-auto text-blue-600" size={28} />
-        </div>
-        <p className="text-slate-400 font-medium animate-pulse text-sm">Assembling Hall of Fame...</p>
-      </div>
-    )
-  }
+export default function LeaderboardClient({ 
+  initialLeaderboard, 
+  initialMyStatus 
+}: { 
+  initialLeaderboard: any[], 
+  initialMyStatus: any 
+}) {
+  const leaderboard = initialLeaderboard || []
+  const myStatus = initialMyStatus || { experience_points: 0, current_streak: 0, badges: [] }
 
   const topThree = leaderboard.slice(0, 3)
   const others = leaderboard.slice(3)
@@ -222,6 +192,11 @@ export default function LeaderboardClient() {
                   </div>
                  )
               })}
+              {others.length === 0 && (
+                <div className="p-8 text-center text-slate-500">
+                  No other active candidates in the current range.
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -282,5 +257,25 @@ export default function LeaderboardClient() {
         </div>
       </div>
     </div>
+  )
+}
+
+function Medal({ size, className }: { size: number, className?: string }) {
+  return (
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width={size} 
+      height={size} 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={className}
+    >
+      <circle cx="12" cy="8" r="7"/>
+      <path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"/>
+    </svg>
   )
 }
