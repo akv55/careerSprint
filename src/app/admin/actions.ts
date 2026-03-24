@@ -296,3 +296,120 @@ export async function getAdminEnrollments(filters?: { search?: string, status?: 
     totalCount: count || 0
   }
 }
+
+export async function getAdminTestSessionById(sessionId: string) {
+  const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  if (profile?.role !== 'admin') throw new Error('Unauthorized')
+
+  const { data: session } = await supabase
+    .from('test_sessions')
+    .select('*')
+    .eq('id', sessionId)
+    .single()
+
+  if (!session) return null
+
+  const { data: questions } = await supabase
+    .from('questions')
+    .select('*')
+    .in('id', session.question_ids)
+
+  return { session, questions: questions || [] }
+}
+
+export async function getRevenueStats() {
+  const supabase = await createClient()
+
+  // Verify admin
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+  if (profile?.role !== 'admin') throw new Error('Unauthorized')
+
+  const { data: enrollments } = await supabase
+    .from('enrollments')
+    .select('amount_paid, remaining_amount, total_course_amount, payment_status, purchased_at')
+
+  let totalCollected = 0
+  let totalRemaining = 0
+  let totalExpected = 0
+  const monthlyRevenue: Record<string, number> = {}
+
+  if (enrollments) {
+    enrollments.forEach(en => {
+      const amount = parseFloat(en.amount_paid) || 0
+      const remaining = parseFloat(en.remaining_amount) || 0
+      const expected = parseFloat(en.total_course_amount) || amount // default to amount if missing
+
+      totalCollected += amount
+      totalRemaining += remaining
+      totalExpected += expected
+
+      if (amount > 0 && en.purchased_at) {
+        const d = new Date(en.purchased_at)
+        const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+        monthlyRevenue[monthKey] = (monthlyRevenue[monthKey] || 0) + amount
+      }
+    })
+  }
+
+  // Sort monthly revenue
+  const chartData = Object.keys(monthlyRevenue).sort().slice(-6).map(key => ({
+    month: key,
+    revenue: monthlyRevenue[key]
+  }))
+
+  return { totalCollected, totalRemaining, totalExpected, chartData }
+}
+
+export async function getLeads() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+  if (profile?.role !== 'admin') throw new Error('Unauthorized')
+
+  const { data: leads } = await supabase
+    .from('enrollment_leads')
+    .select('*, profiles(*)')
+    .order('created_at', { ascending: false })
+
+  if (leads && leads.length > 0) {
+    const fs = require('fs')
+    fs.writeFileSync('leads_dump.json', JSON.stringify(leads[0], null, 2))
+  }
+
+  return leads || []
+}
+
+export async function updateLeadStatus(id: string, status: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+  if (profile?.role !== 'admin') throw new Error('Unauthorized')
+
+  const updates: any = { status, updated_at: new Date().toISOString() }
+  if (status === 'converted') {
+    updates.converted_at = new Date().toISOString()
+  }
+
+  const { error } = await supabase
+    .from('enrollment_leads')
+    .update(updates)
+    .eq('id', id)
+
+  if (error) throw error
+  return { success: true }
+}
+

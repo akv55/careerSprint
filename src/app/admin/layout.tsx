@@ -12,7 +12,9 @@ import {
   ChevronRight,
   LogOut,
   Zap,
-  ShoppingBag
+  ShoppingBag,
+  DollarSign,
+  PhoneCall
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
