@@ -1,33 +1,18 @@
-import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
-import { getUserDomain } from '../actions'
-import DashboardLayoutWrapper from '../components/dashboard-layout-wrapper'
+import { Suspense } from 'react'
 import ProfileClient from './profile-client'
 
-export default async function ProfilePage() {
-  const supabase = await createClient()
-  const { data: { user }, error } = await supabase.auth.getUser()
-  if (error || !user) redirect('/auth/login')
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*, role')
-    .eq('id', user.id)
-    .single()
-    
-  const userDomain = await getUserDomain()
-
+function LoadingFallback() {
   return (
-    <DashboardLayoutWrapper 
-      profileFullName={profile?.full_name} 
-      email={user.email!} 
-      domain={userDomain?.domain}
-      role={profile?.role}
-    >
-      <ProfileClient 
-        user={{ email: user.email!, fullName: profile?.full_name || '' }}
-        userDomain={userDomain}
-      />
-    </DashboardLayoutWrapper>
+    <div className="flex h-full items-center justify-center p-8">
+      <div className="text-muted-foreground animate-pulse">Loading profile data...</div>
+    </div>
+  )
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <ProfileClient />
+    </Suspense>
   )
 }

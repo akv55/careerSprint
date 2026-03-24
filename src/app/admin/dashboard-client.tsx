@@ -1,24 +1,59 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
+import React from 'react'
 import { 
   Users, 
   CheckCircle2, 
   TrendingUp, 
   Clock,
-  ArrowUpRight,
-  User as UserIcon,
-  Search
+  ArrowUpRight
 } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { getAdminStats } from './actions'
-import AdminDashboardClient from './dashboard-client'
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
+  BarChart, Bar
+} from 'recharts'
 
-export const dynamic = 'force-dynamic'
+interface AdminStats {
+  userCount: number
+  examCount: number
+  recentUsers: number
+  avgSuccessRate: number
+  recentActivities: any[]
+  chartData: any[]
+}
 
-export default async function AdminDashboard() {
-  const stats = await getAdminStats()
+export default function AdminDashboardClient({ stats }: { stats: AdminStats }) {
+  const kpis = [
+    { 
+      label: 'Total Users', 
+      value: stats.userCount || 0, 
+      icon: Users, 
+      color: 'blue',
+      growth: `+${stats.recentUsers || 0} this month`
+    },
+    { 
+      label: 'Exams Completed', 
+      value: stats.examCount || 0, 
+      icon: CheckCircle2, 
+      color: 'green',
+      growth: 'Stable traffic'
+    },
+    { 
+      label: 'Avg. Success Rate', 
+      value: `${stats.avgSuccessRate || 0}%`, 
+      icon: TrendingUp, 
+      color: 'purple',
+      growth: 'Based on all tests'
+    },
+    { 
+      label: 'Active Now', 
+      value: 'Live', 
+      icon: Clock, 
+      color: 'orange',
+      growth: 'Real-time monitoring'
+    }
+  ]
 
   return (
     <div className="space-y-8">
@@ -57,7 +92,7 @@ export default async function AdminDashboard() {
           <h2 className="text-lg font-bold text-slate-900 mb-6">User Growth</h2>
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={stats?.chartData || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <AreaChart data={stats.chartData || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2}/>
@@ -82,7 +117,7 @@ export default async function AdminDashboard() {
           <h2 className="text-lg font-bold text-slate-900 mb-6">Exam Attempts</h2>
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={stats?.chartData || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <BarChart data={stats.chartData || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
@@ -97,56 +132,51 @@ export default async function AdminDashboard() {
           </div>
         </div>
       </div>
-        {/* Recent Activity Feed */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-900">Recent Exam Activities</h2>
-            <button className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1">
-              View All <ArrowUpRight size={16} />
-            </button>
-          </div>
-          
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 divide-y divide-slate-50 overflow-hidden">
-            {stats?.recentActivities.map((activity, idx) => {
-              const profile = Array.isArray(activity.profiles) ? activity.profiles[0] : activity.profiles
-              const displayName = profile?.full_name || profile?.email || 'Anonymous'
-              const initials = displayName.split(' ').map((w: string) => w[0]).slice(0,2).join('').toUpperCase()
-              return (
-                <Link href={`/admin/sessions/${activity.id}`} key={activity.id} className="p-4 hover:bg-slate-50 transition-colors flex items-center gap-4 block cursor-pointer">
-                  <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                    {profile?.avatar_url ? (
-                      <img src={profile.avatar_url} alt={displayName} className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-sm font-bold text-blue-600">{initials}</span>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-slate-900 truncate">
-                      {displayName}
-                    </p>
-                    <p className="text-sm text-slate-500 truncate">
-                      Completed <span className="font-medium text-slate-700">{activity.domain}</span> exam • {activity.score}/{activity.total} score
-                    </p>
-                  </div>
-                  <div className="text-right whitespace-nowrap">
-                    <p className="text-xs font-medium text-slate-400">
-                      {new Date(activity.completed_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </p>
-                    <p className="text-xs text-slate-400">
-                      {new Date(activity.completed_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                </Link>
-              )
-            })}
-            {(!stats?.recentActivities || stats.recentActivities.length === 0) && (
-              <div className="p-8 text-center text-slate-500">
-                No recent activities found.
+
+      {/* Recent Activity Feed */}
+      <div className="lg:col-span-2 space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-slate-900">Recent Exam Activities</h2>
+          <button className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1">
+            View All <ArrowUpRight size={16} />
+          </button>
+        </div>
+        
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 divide-y divide-slate-50 overflow-hidden">
+          {stats.recentActivities.map((activity) => {
+            const profile = Array.isArray(activity.profiles) ? activity.profiles[0] : activity.profiles
+            const displayName = profile?.full_name || profile?.email || 'Anonymous'
+            const initials = displayName.split(' ').map((w: string) => w[0]).slice(0,2).join('').toUpperCase()
+            return (
+              <div key={activity.id} className="p-4 hover:bg-slate-50 transition-colors flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                  {profile?.avatar_url ? (
+                    <img src={profile.avatar_url} alt={displayName} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-sm font-bold text-blue-600">{initials}</span>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-slate-900 truncate">
+                    {displayName}
+                  </p>
+                  <p className="text-sm text-slate-500 truncate">
+                    Completed <span className="font-medium text-slate-700">{activity.domain}</span> exam • {activity.score}/{activity.total} score
+                  </p>
+                </div>
+                <div className="text-right whitespace-nowrap">
+                  <p className="text-xs font-medium text-slate-400">
+                    {new Date(activity.completed_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                  <p className="text-xs text-slate-400">
+                    {new Date(activity.completed_at).toLocaleDateString()}
+                  </p>
+                </div>
               </div>
-            )}
-          </div>
+            )
+          })}
         </div>
       </div>
+    </div>
   )
 }
-

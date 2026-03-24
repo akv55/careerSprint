@@ -1,8 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import React, { useState, useEffect } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import { 
   BarChart3, 
   Users, 
@@ -38,6 +37,24 @@ export default function AdminLayout({
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathname = usePathname()
+  const [navigatingTo, setNavigatingTo] = useState<string | null>(null)
+  const router = useRouter()
+
+  useEffect(() => {
+    // Reset navigation state when pathname finishes updating
+    setNavigatingTo(null)
+  }, [pathname])
+
+  const handleNavigation = (href: string) => {
+    // Don't navigate if we are already on the exact target page
+    if (pathname === href) return 
+    
+    // Don't navigate if we are already in the process of navigating to this exact page (prevents click spam)
+    if (navigatingTo === href) return 
+
+    setNavigatingTo(href)
+    router.push(href)
+  }
 
   return (
     <div className="h-screen bg-slate-50 flex overflow-hidden">
@@ -72,10 +89,10 @@ export default function AdminLayout({
           {navItems.map((item) => {
             const isActive = pathname === item.href
             return (
-              <Link 
+              <button 
                 key={item.href} 
-                href={item.href}
-                className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all group ${
+                onClick={() => handleNavigation(item.href)}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all group ${
                   isActive 
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' 
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
@@ -94,19 +111,19 @@ export default function AdminLayout({
                 {isActive && isSidebarOpen && (
                   <ChevronRight size={14} className="ml-auto opacity-50" />
                 )}
-              </Link>
+              </button>
             )
           })}
         </nav>
 
         <div className="p-4 border-t border-slate-800">
-          <Link 
-            href="/dashboard"
-            className="flex items-center gap-3 px-3 py-3 text-slate-400 hover:text-red-400 transition-colors"
+          <button 
+            onClick={() => handleNavigation('/dashboard')}
+            className="w-full flex items-center gap-3 px-3 py-3 text-slate-400 hover:text-red-400 transition-colors"
           >
             <LogOut size={20} />
             {isSidebarOpen && <span className="font-medium">Exit Admin</span>}
-          </Link>
+          </button>
         </div>
       </aside>
 
@@ -148,17 +165,19 @@ export default function AdminLayout({
               </div>
               <nav className="flex-1 space-y-2">
                 {navItems.map((item) => (
-                  <Link 
+                  <button 
                     key={item.href} 
-                    href={item.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-4 rounded-xl ${
+                    onClick={() => {
+                      setIsMobileMenuOpen(false)
+                      handleNavigation(item.href)
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-4 rounded-xl ${
                       pathname === item.href ? 'bg-blue-600' : 'text-slate-400'
                     }`}
                   >
                     <item.icon size={20} />
                     <span className="font-medium">{item.name}</span>
-                  </Link>
+                  </button>
                 ))}
               </nav>
             </motion.div>
