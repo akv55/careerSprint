@@ -1,16 +1,18 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { User, Mail, Briefcase, Award, Edit3, CheckCircle2 } from 'lucide-react'
 import SetupWizard from '../setup-wizard'
+import { useUser } from '../components/user-context'
 
-interface ProfileClientProps {
-  user: { email: string; fullName: string }
-  userDomain: any
-}
-
-export default function ProfileClient({ user, userDomain }: ProfileClientProps) {
+export default function ProfileClient() {
+  const { user, profile, userDomain } = useUser()
   const [isEditingSkills, setIsEditingSkills] = useState(false)
+
+  if (!user) return null
+
+  const userEmail = user.email
+  const fullName = profile?.full_name || ''
 
   if (isEditingSkills) {
     return (
@@ -41,13 +43,13 @@ export default function ProfileClient({ user, userDomain }: ProfileClientProps) 
           <div className="flex items-start gap-4">
             <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
               <span className="text-2xl font-bold text-primary">
-                {user.fullName ? user.fullName[0].toUpperCase() : user.email[0].toUpperCase()}
+                {fullName ? fullName[0].toUpperCase() : userEmail[0].toUpperCase()}
               </span>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">{user.fullName || 'No Name Provided'}</h2>
+              <h2 className="text-xl font-bold text-gray-900">{fullName || 'No Name Provided'}</h2>
               <p className="text-gray-500 flex items-center gap-2 mt-1">
-                <Mail className="w-4 h-4" /> {user.email}
+                <Mail className="w-4 h-4" /> {userEmail}
               </p>
             </div>
           </div>
@@ -102,7 +104,7 @@ export default function ProfileClient({ user, userDomain }: ProfileClientProps) 
                 <CheckCircle2 className="w-4 h-4 text-primary" /> Tracked Skills
               </h3>
               <div className="flex flex-wrap gap-2">
-                {userDomain.skills.map((s: string) => (
+                {(userDomain.skills || []).map((s: string) => (
                   <span key={s} className="px-3 py-1.5 rounded-lg bg-primary/10 text-primary font-semibold text-sm border border-primary/20">
                     {s}
                   </span>
@@ -115,3 +117,4 @@ export default function ProfileClient({ user, userDomain }: ProfileClientProps) 
     </div>
   )
 }
+

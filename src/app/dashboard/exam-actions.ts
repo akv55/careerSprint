@@ -130,6 +130,57 @@ export async function saveTestSession(data: {
     .single()
 
   if (error) return { error: error.message }
+
+  // --- GAMIFICATION LOGIC ---
+  const { data: profile } = await supabase
+    .from('user_gamification')
+    .select('experience_points, current_streak, last_exam_date, badges')
+    .eq('user_id', user.id)
+    .single()
+
+  if (profile) {
+    const xpGained = score * 10
+    const newXP = (profile.experience_points || 0) + xpGained
+    
+    let newStreak = profile.current_streak || 0
+    const lastExamDate = profile.last_exam_date ? new Date(profile.last_exam_date) : null
+    const now = new Date()
+    
+    if (!lastExamDate) {
+      newStreak = 1
+    } else {
+      const diffMs = now.getTime() - lastExamDate.getTime()
+      const diffDays = diffMs / (1000 * 60 * 60 * 24)
+      
+      if (diffDays >= 1 && diffDays < 2) {
+        newStreak += 1
+      } else if (diffDays >= 2) {
+        newStreak = 1
+      }
+      // if < 1 day, streak stays same
+    }
+
+    // Badge Logic
+    const currentBadges = profile.badges || []
+    const newBadges = [...currentBadges]
+    
+    if (newBadges.length === 0) newBadges.push('First Assessment')
+    if (score === data.questionIds.length && !newBadges.includes('Perfect Score')) newBadges.push('Perfect Score')
+    if (newStreak === 3 && !newBadges.includes('3-Day Streak')) newBadges.push('3-Day Streak')
+    if (newXP >= 500 && !newBadges.includes('XP Pioneer')) newBadges.push('XP Pioneer')
+
+    await supabase
+      .from('user_gamification')
+      .update({
+        experience_points: newXP,
+        current_streak: newStreak,
+        last_exam_date: now.toISOString(),
+        badges: newBadges,
+        updated_at: now.toISOString()
+      })
+      .eq('user_id', user.id)
+  }
+
   return { id: session.id, score, total: data.questionIds.length }
 }
 

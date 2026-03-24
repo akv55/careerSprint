@@ -1,5 +1,8 @@
+'use client';
+
 import Link from 'next/link'
 import { FileText, History, BarChart2, ArrowRight, BookOpen, Target, Clock, CheckCircle2, ChevronRight } from 'lucide-react'
+import { useUser } from './user-context'
 
 interface RecentSession {
   id: string; domain: string; mode: string
@@ -7,10 +10,6 @@ interface RecentSession {
 }
 
 interface DashboardHomeProps {
-  domain: string
-  secondaryDomain?: string | null
-  skills: string[]
-  userName: string
   stats: { examsTaken: number; bestScore: number | null; avgTimeSecs: number | null }
   recentSessions: RecentSession[]
 }
@@ -36,7 +35,14 @@ const quickActions = [
   },
 ]
 
-export default function DashboardHome({ domain, secondaryDomain, skills, userName, stats, recentSessions }: DashboardHomeProps) {
+export default function DashboardHome({ stats, recentSessions }: DashboardHomeProps) {
+  const { user, profile, userDomain } = useUser()
+  
+  if (!user || !userDomain) return null
+  
+  const userName = profile?.full_name || user.email || 'User'
+  const { domain, secondary_domain: secondaryDomain, skills = [] } = userDomain
+
   const firstName = userName.split(' ')[0]
   const fmtTime = (s: number) => `${Math.floor(s / 60)}m ${s % 60}s`
 

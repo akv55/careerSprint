@@ -1,0 +1,44 @@
+﻿[
+  {
+    "domain": "Frontend",
+    "skill": "React",
+    "question": "Which hook should be used for data fetching in a React functional component?",
+    "options": {
+      "a": "useMemo",
+      "b": "useEffect",
+      "c": "useCallback",
+      "d": "useFetch"
+    },
+    "correct": "b",
+    "difficulty": "easy",
+    "explanation": "useEffect is built into React specifically for handling side-effects such as data fetching."
+  },
+  {
+    "domain": "Backend",
+    "skill": "Node.js",
+    "question": "How do you handle asynchronous operations in modern Node.js?",
+    "options": {
+      "a": "Only using Callbacks",
+      "b": "Using Async/Await and Promises",
+      "c": "Using multithreading",
+      "d": "Node.js doesn't support async operations"
+    },
+    "correct": "b",
+    "difficulty": "medium",
+    "explanation": "Modern Node.js typically handles asynchronous logic using native Promises and async/await syntax to avoid callback hell."
+  },
+  {
+    "domain": "Database",
+    "skill": "SQL",
+    "question": "Which SQL statement is used to extract data from a database and filter grouped records?",
+    "options": {
+      "a": "WHERE",
+      "b": "FILTER",
+      "c": "HAVING",
+      "d": "GROUP FILTER"
+    },
+    "correct": "c",
+    "difficulty": "hard",
+    "explanation": "The HAVING clause was added to SQL because the WHERE keyword cannot be used with aggregate functions (like SUM, COUNT, etc)."
+  }
+]

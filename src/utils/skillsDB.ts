@@ -101,3 +101,34 @@ export function extractDomainAndSkills(text: string) {
     skills: Array.from(matchedSkills)
   };
 }
+
+export interface EducationEntry {
+  degree: string;
+  institution: string;
+  year?: string;
+  grade?: string;
+}
+
+export interface ExperienceEntry {
+  role: string;
+  company: string;
+  duration?: string;
+  description: string[];
+  location?: string;
+}
+
+export interface ProjectEntry {
+  name: string;
+  description: string[];
+  techStack: string[];
+}
+
+export function extractResumeDetails(text: string) {
+  const result = extractDomainAndSkills(text);
+  return {
+    ...result,
+    education: [] as EducationEntry[],
+    experience: [] as ExperienceEntry[],
+    projects: [] as ProjectEntry[]
+  };
+}

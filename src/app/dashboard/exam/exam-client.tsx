@@ -1,22 +1,28 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import ExamModeSelector from './exam-mode-selector'
 import ExamRunner from './exam-runner'
 import { getExamQuestions, type ExamMode, type ExamQuestion } from '../exam-actions'
 import { Loader2 } from 'lucide-react'
+import { useUser } from '../components/user-context'
 
-import DashboardLayoutWrapper from '../components/dashboard-layout-wrapper'
+export default function ExamClient() {
+  const { user, profile, userDomain } = useUser()
+  const router = useRouter()
 
-interface ExamClientProps {
-  domain: string
-  secondaryDomain?: string | null
-  skills: string[]
-  profileFullName?: string | null
-  email: string
-}
+  if (!userDomain) {
+    // If no domain is configured, redirect or handle this gracefully.
+    // In actual practice, layout or middleware often deflects unconfigured users.
+    if (typeof window !== 'undefined') router.push('/dashboard')
+    return null
+  }
 
-export default function ExamClient({ domain, secondaryDomain, skills, profileFullName, email }: ExamClientProps) {
+  const { domain, secondary_domain: secondaryDomain, skills = [] } = userDomain
+  const profileFullName = profile?.full_name
+  const email = user?.email || ''
+
   const [phase, setPhase] = useState<'select' | 'loading' | 'running'>('select')
   const [mode, setMode] = useState<ExamMode>('both')
   const [questions, setQuestions] = useState<ExamQuestion[]>([])
@@ -54,7 +60,7 @@ export default function ExamClient({ domain, secondaryDomain, skills, profileFul
   }
 
   return (
-    <DashboardLayoutWrapper profileFullName={profileFullName} email={email} domain={domain}>
+    <>
       {phase === 'loading' ? (
         <div className="flex items-center justify-center py-24">
           <div className="text-center">
@@ -71,6 +77,6 @@ export default function ExamClient({ domain, secondaryDomain, skills, profileFul
           error={error}
         />
       )}
-    </DashboardLayoutWrapper>
+    </>
   )
 }

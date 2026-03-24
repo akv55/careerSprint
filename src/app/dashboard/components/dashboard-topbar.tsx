@@ -1,15 +1,19 @@
+'use client';
+
 import Link from 'next/link'
 import Image from 'next/image'
 import { signOutUser } from '../actions'
+import TopAvatar from './top-avatar'
+import { useUser } from './user-context'
 
-interface TopbarProps {
-  fullName: string | null
-  email: string
-  domain: string | null
-}
+export default function DashboardTopbar() {
+  const { user, profile, userDomain } = useUser()
+  
+  if (!user) return null
+  
+  const domain = userDomain?.domain
 
-export default function DashboardTopbar({ fullName, email, domain }: TopbarProps) {
-  const displayName = fullName || email
+  const displayName = profile?.full_name || user.email
   const initials = displayName
     .split(' ')
     .map((w: string) => w[0])
@@ -18,12 +22,12 @@ export default function DashboardTopbar({ fullName, email, domain }: TopbarProps
     .toUpperCase()
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-40 flex-shrink-0">
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shrink-0">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
 
           {/* Logo */}
-          <Link href="/dashboard" className="flex items-center flex-shrink-0">
+          <Link href="/dashboard" className="flex items-center shrink-0">
             <Image src="/logo.png" alt="CareerSprint" width={180} height={36} priority />
           </Link>
 
@@ -38,13 +42,18 @@ export default function DashboardTopbar({ fullName, email, domain }: TopbarProps
               </span>
             )}
 
+            {profile?.role === 'admin' && (
+              <span className="inline-flex items-center gap-1.5 text-xs font-black text-red-600 bg-red-50 border border-red-100 rounded-full px-3 py-1 animate-pulse">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-600 inline-block" />
+                ADMIN
+              </span>
+            )}
+
             <div className="w-px h-6 bg-gray-200" />
 
             {/* Avatar + name */}
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
-                <span className="text-xs font-bold text-primary">{initials}</span>
-              </div>
+              <TopAvatar initials={initials} />
               <span className="hidden sm:block text-sm font-semibold text-gray-800 max-w-[140px] truncate">
                 {displayName}
               </span>
