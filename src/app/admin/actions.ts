@@ -17,31 +17,40 @@ export async function getAdminStats() {
 
   if (profile?.role !== 'admin') throw new Error('Unauthorized')
 
-  // 1. Total Registered Users
-  const { count: userCount } = await supabase
-    .from('profiles')
-    .select('*', { count: 'exact', head: true })
-
-  // 2. Total Exams Completed
-  const { count: examCount } = await supabase
-    .from('test_sessions')
-    .select('*', { count: 'exact', head: true })
-
   // 3. User Growth (Last 30 days)
   const thirtyDaysAgo = new Date()
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-  
-  const { count: recentUsers } = await supabase
-    .from('profiles')
-    .select('*', { count: 'exact', head: true })
-    .gte('created_at', thirtyDaysAgo.toISOString())
 
-  // 4. Recent Activities (Fetch sessions then join locally since foreign key is to auth.users not profiles)
-  const { data: rawActivities } = await supabase
-    .from('test_sessions')
-    .select('*')
-    .order('completed_at', { ascending: false })
-    .limit(10)
+  const [
+    { count: userCount },
+    { count: examCount },
+    { count: recentUsers },
+    { data: rawActivities },
+    { data: allSessions },
+    { data: allProfiles },
+    { data: allExamSessions }
+  ] = await Promise.all([
+    // 1. Total Registered Users
+    supabase.from('profiles').select('*', { count: 'exact', head: true }),
+    
+    // 2. Total Exams Completed
+    supabase.from('test_sessions').select('*', { count: 'exact', head: true }),
+    
+    // 3. User Growth (Last 30 days)
+    supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', thirtyDaysAgo.toISOString()),
+    
+    // 4. Recent Activities (Fetch sessions)
+    supabase.from('test_sessions').select('*').order('completed_at', { ascending: false }).limit(10),
+    
+    // 5. Success Rate
+    supabase.from('test_sessions').select('score, total'),
+    
+    // 6. Chart Data Generation - all profiles
+    supabase.from('profiles').select('created_at'),
+    
+    // 6. Chart Data Generation - all sessions
+    supabase.from('test_sessions').select('completed_at')
+  ])
 
   let recentActivities: any[] = []
   if (rawActivities && rawActivities.length > 0) {
@@ -60,23 +69,13 @@ export async function getAdminStats() {
     })
   }
 
-  // 5. Success Rate
-  // Simplified logic: Average score percentage across all sessions
-  const { data: allSessions } = await supabase
-    .from('test_sessions')
-    .select('score, total')
-  
   let avgSuccessRate = 0
   if (allSessions && allSessions.length > 0) {
     const totalPct = allSessions.reduce((acc, curr) => acc + (curr.score / curr.total), 0)
     avgSuccessRate = Math.round((totalPct / allSessions.length) * 100)
   }
 
-  // 6. Chart Data Generation (Last 6 Months)
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-  
-  const { data: allProfiles } = await supabase.from('profiles').select('created_at')
-  const { data: allExamSessions } = await supabase.from('test_sessions').select('completed_at')
 
   const chartData = []
   const now = new Date()
@@ -155,37 +154,20 @@ export async function getAdminUsers(filters?: { search?: string, page?: number, 
 export async function getAdminUserDetail(userId: string) {
   const supabase = await createClient()
 
-  // 1. Profile data
-  const { data: profile, error: pError } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', userId)
-    .single()
+  const [
+    { data: profile, error: pError },
+    { data: exams, error: eError },
+    { data: domain },
+    { data: gamification }
+  ] = await Promise.all([
+    supabase.from('profiles').select('*').eq('id', userId).single(),
+    supabase.from('test_sessions').select('*').eq('user_id', userId).order('completed_at', { ascending: false }),
+    supabase.from('user_domains').select('*').eq('user_id', userId).single(),
+    supabase.from('user_gamification').select('*').eq('user_id', userId).single()
+  ])
 
   if (pError) throw pError
-
-  // 2. Exam History
-  const { data: exams, error: eError } = await supabase
-    .from('test_sessions')
-    .select('*')
-    .eq('user_id', userId)
-    .order('completed_at', { ascending: false })
-
   if (eError) throw eError
-
-  // 3. Domains/Skills
-  const { data: domain } = await supabase
-    .from('user_domains')
-    .select('*')
-    .eq('user_id', userId)
-    .single()
-
-  // 4. Gamification data
-  const { data: gamification } = await supabase
-    .from('user_gamification')
-    .select('*')
-    .eq('user_id', userId)
-    .single()
 
   return {
     profile,
