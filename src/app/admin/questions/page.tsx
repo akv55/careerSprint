@@ -18,6 +18,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion'
 import { getAdminQuestions, deleteQuestion, getAdminFilterOptions } from '../actions'
 import BulkUploadModal from './bulk-upload'
+import AddSingleModal from './add-single'
 import CustomSelect from '@/components/ui/custom-select'
 
 export default function QuestionBank() {
@@ -30,6 +31,7 @@ export default function QuestionBank() {
   const [totalCount, setTotalCount] = useState(0)
   const [availableDomains, setAvailableDomains] = useState<string[]>([])
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
 
   const loadFilterOptions = async () => {
     try {
@@ -75,10 +77,13 @@ export default function QuestionBank() {
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this question?')) return
     try {
-      await deleteQuestion(id)
-      setQuestions(questions.filter(q => q.id !== id))
-    } catch (error) {
-      alert('Failed to delete question')
+      const res = await deleteQuestion(id)
+      if (res.success) {
+        setQuestions(prev => prev.filter(q => q.id !== id))
+      }
+    } catch (error: any) {
+      console.error('Delete error:', error)
+      alert(error.message || 'Failed to delete question')
     }
   }
 
@@ -99,7 +104,10 @@ export default function QuestionBank() {
           >
             <Upload size={18} /> Bulk Upload
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all font-bold text-sm shadow-lg shadow-blue-500/10">
+          <button 
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all font-bold text-sm shadow-lg shadow-blue-500/10"
+          >
             <Plus size={18} /> New Question
           </button>
         </div>
@@ -243,6 +251,12 @@ export default function QuestionBank() {
         onClose={() => setIsUploadModalOpen(false)}
         onSuccess={loadQuestions}
       />
+
+      <AddSingleModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSuccess={loadQuestions}
+      />
     </div>
   )
 }
@@ -266,3 +280,4 @@ function CheckCircle2({ size, className }: { size: number, className?: string })
     </svg>
   )
 }
+

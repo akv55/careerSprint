@@ -74,13 +74,6 @@ export default function AdminDashboard() {
       icon: TrendingUp, 
       color: 'purple',
       growth: 'Based on all tests'
-    },
-    { 
-      label: 'Active Now', 
-      value: 'Live', 
-      icon: Clock, 
-      color: 'orange',
-      growth: 'Real-time monitoring'
     }
   ]
 
@@ -92,7 +85,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {kpis.map((kpi, idx) => (
           <motion.div
             key={kpi.label}

@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
+import { revalidatePath } from 'next/cache'
 
 export async function getAdminStats() {
   const supabase = await createClient()
@@ -224,17 +225,41 @@ export async function getAdminQuestions(filters?: { domain?: string, skill?: str
 
 export async function deleteQuestion(id: string) {
   const supabase = await createClient()
+
+  // Verify admin role 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+  if (profile?.role !== 'admin') throw new Error('Unauthorized')
+
+  // First clear any bookmarks for this question to avoid FK constraint
+  await supabase
+    .from('user_bookmarks')
+    .delete()
+    .eq('question_id', id)
+
   const { error } = await supabase
     .from('questions')
     .delete()
     .eq('id', id)
   
-  if (error) throw error
+  if (error) {
+    console.error('Error deleting question:', error)
+    throw error
+  }
+  
+  revalidatePath('/admin/questions')
   return { success: true }
 }
 
 export async function bulkUploadQuestions(questions: any[]) {
   const supabase = await createClient()
+
+  // Verify admin role 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+  if (profile?.role !== 'admin') throw new Error('Unauthorized')
   
   // Basic validation and formatting
   const formatted = questions.map(q => ({
@@ -253,6 +278,8 @@ export async function bulkUploadQuestions(questions: any[]) {
     .select('id')
 
   if (error) throw error
+  
+  revalidatePath('/admin/questions')
   return { count: data?.length || 0 }
 }
 
@@ -429,3 +456,34 @@ export async function updateLeadStatus(id: string, status: string) {
   return { success: true }
 }
 
+
+export async function addQuestion(questionData: any) {
+  const supabase = await createClient()
+
+  // Verify admin
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+  if (profile?.role !== 'admin') throw new Error('Unauthorized')
+
+  const formatted = {
+    domain: questionData.domain,
+    skill: questionData.skill,
+    question: questionData.question,
+    options: questionData.options,
+    correct: questionData.correct,
+    explanation: questionData.explanation || '',
+    difficulty: questionData.difficulty || 'medium'
+  }
+
+  const { data, error } = await supabase
+    .from('questions')
+    .insert([formatted])
+    .select('id')
+    .single()
+
+  if (error) throw error
+  
+  revalidatePath('/admin/questions')
+  return { success: true, id: data.id }
+}

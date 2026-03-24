@@ -76,8 +76,7 @@ function RevenueView() {
             <div className="p-3 rounded-xl bg-orange-50 text-orange-600">
               <AlertCircle size={24} />
             </div>
-            <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-orange-50 text-orange-700">Needs Attention</span>
-          </div>
+            </div>
           <h3 className="text-slate-500 text-sm font-medium">Remaining Payments</h3>
           <p className="text-3xl font-extrabold text-orange-600 mt-1">₹{(stats?.totalRemaining || 0).toLocaleString()}</p>
         </div>
@@ -348,11 +347,6 @@ export default function EnrollmentsHub() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Sales & Enrollments Hub</h1>
-        <p className="text-slate-500">Manage course purchases, track leads, and view platform revenue.</p>
-      </div>
-
       <div className="flex items-center gap-2 border-b border-slate-200 overflow-x-auto custom-scrollbar pb-px">
         <button
           onClick={() => setActiveTab('enrollments')}

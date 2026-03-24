@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { User, Mail, Briefcase, Award, Edit3, CheckCircle2 } from 'lucide-react'
@@ -115,3 +115,4 @@ export default function ProfileClient({ user, userDomain }: ProfileClientProps) 
     </div>
   )
 }
+
